@@ -47,7 +47,7 @@ body {
  * Header
  */
 .masthead {
-  margin-bottom: 2rem;
+  margin-bottom: 3em;
 }
 
 .masthead-brand {
@@ -85,12 +85,12 @@ body {
   }
 }
 
-
-/*
- * Cover
- */
-.cover-heading{
-    text-align: center;
+/* heading */
+.normal-heading{
+  text-align: center;
+  height: 10%;
+  border-bottom: .25rem solid transparent;
+  border-bottom-color: #9cbbc8
 }
 
 /*
@@ -99,7 +99,45 @@ body {
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
+/* form */
 
-.form-group{
-    height: 30%;
+.form input:required{
+  border-left-color: salmon;
+  border-left-width: 0.5em
 }
+
+.form{
+  height: 200%;
+  background-color:#1a4876;
+  padding-top: 5%
+}
+
+.input-group {
+  width: 400px; 
+  margin: 0 auto;
+  text-align: left;
+}
+
+.input-label{
+  text-align: right;
+  clear: both;
+  float:left;
+  margin-right:5%;
+}
+
+.input-field {
+  width: 80%;
+  padding-left: 2%;
+  outline: none;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+}
+
+.input-field:focus {
+  border: 2px solid dodgerblue;
+}
+
+
+
+
