@@ -1,1 +1,3 @@
 # fetchAPI
+
+npm install
