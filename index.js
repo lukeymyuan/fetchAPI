@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var request = require('request');
+var http = require('http');
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -26,7 +28,7 @@ app.post('/', (req, res)=> {
 app.get('/login', (req, res) => {
     res.sendFile( __dirname + "/" + "login.html" );
  })
- 
+
  app.post('/login', (req, res)=> {
     // Prepare output in JSON format
     response = {
@@ -40,14 +42,17 @@ app.get('/login', (req, res) => {
  app.get('/prediction', (req, res) => {
     res.sendFile( __dirname + "/" + "prediction.html" );
  })
- 
+
  app.post('/prediction', (req, res)=> {
+   console.log(req.body.cast);
     // Prepare output in JSON format
-    response = {
-       budget: req.body.budget,
-       cast:req.body.cast
-    };
-    console.log(response);
+    request.post('http://127.0.0.1:5000/collections',
+    { json: { "indicator_id": req.body.cast} },
+    function (error, response, body) {
+      console.log('error:', error); // Print the error if one occurred
+      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+      console.log('body:', body); // Print the HTML for the Google homepage.
+    });
     res.redirect('/result')
  })
 
@@ -56,7 +61,7 @@ app.get('/login', (req, res) => {
  })
 
 
- 
+
 var server = app.listen(8081, function () {
    var host = server.address().address
    var port = server.address().port

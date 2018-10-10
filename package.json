@@ -18,6 +18,7 @@
   "homepage": "https://github.com/lukeymyuan/fetchAPI#readme",
   "dependencies": {
     "express": "^4.16.3",
+    "nodemon": "^1.18.4",
     "request": "^2.88.0"
   }
 }
