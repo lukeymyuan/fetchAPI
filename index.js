@@ -29,7 +29,7 @@ app.get('/login', (req, res) => {
     res.sendFile( __dirname + "/" + "login.html" );
  })
 
- app.post('/login', (req, res)=> {
+app.post('/login', (req, res)=> {
     // Prepare output in JSON format
     response = {
        email:req.body.email,
@@ -39,11 +39,11 @@ app.get('/login', (req, res) => {
     res.redirect('/predict')
  })
 
- app.get('/prediction', (req, res) => {
+app.get('/prediction', (req, res) => {
     res.sendFile( __dirname + "/" + "prediction.html" );
  })
 
- app.post('/prediction', (req, res)=> {
+app.post('/prediction', (req, res)=> {
    console.log(req.body.cast);
     // Prepare output in JSON format
     request.post('http://127.0.0.1:5000/collections',
@@ -56,11 +56,19 @@ app.get('/login', (req, res) => {
     res.redirect('/result')
  })
 
- app.get('/result', (req, res) => {
+app.get('/result', (req, res) => {
     res.sendFile( __dirname + "/" + "result.html" );
  })
 
+// Handle 404
+app.use((req, res) =>{
+  res.status(404).sendFile(__dirname + "/"+'404.html');
+});
 
+// Handle 500
+app.use((error, req, res, next)=> {
+  res.status(500).sendFile(__dirname + +"/"+'500.html');
+});
 
 var server = app.listen(8081, function () {
    var host = server.address().address
