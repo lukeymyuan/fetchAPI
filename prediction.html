@@ -13,7 +13,7 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
   </head>
 
   <body>
@@ -22,24 +22,22 @@
           <div class="inner">
             <h3 class="masthead-brand"><i class="fas fa-film"></i> Movie Paradise </h3>
             <nav class="nav nav-masthead justify-content-center">
-              <a class="nav-link" href="login.html">Login </a>
-              <a class="nav-link" href="signup.html">Sign Up</a>
-              <a class="nav-link active" href="prediction.html">Prediction</a>
+              <a class="nav-link" href="http://127.0.0.1:8081/login">Login </a>
+              <a class="nav-link" href="http://127.0.0.1:8081/">Sign Up</a>
+              <a class="nav-link active" href="http://127.0.0.1:8081/prediction">Prediction</a>
             </nav>
           </div>
         </header>
           <h2 class="normal-heading">Prediction</h2> 
-            <form>
+            <form action="http://127.0.0.1:8081/prediction" method="POST">
               <div class="col mt-4">
                     <label class="input-label">Budget</label>
-                    <input type="number" min="0" class="input-field mr-auto" placeholder="Enter the budget of the movie" required>
+                    <input name="budget" type="number" min="0" class="input-field mr-auto" placeholder="Enter the budget of the movie" required>
               </div>
               <div class="col mt-4">
                 <label class="input-label" style="margin-right:8%;">Cast</label>
-                <input type="text" class="input-field ml-auto" placeholder="Enter the cast of the movie" required>
+                <input anem="cast" type="text" class="input-field ml-auto" placeholder="Enter the cast of the movie" required>
               </div>
-
-              
               <button type="submit" class="btn btn-outline-primary mt-4">Submit</button>
             </form>
   
