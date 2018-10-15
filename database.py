@@ -48,6 +48,16 @@ class Database(object):
 
         return error
 
+    def AuthenticateUser(self,username,password):
+        self.pointer.execute('''SELECT password FROM User WHERE email= (?)''', (username,))
+        result= self.pointer.fetchone()
+        if len(result) > 0:
+            passFind = result[0]
+            print("pass" + passFind)
+            if passFind == password:
+                return True
+        return False
+
     def printer(self):
         self.pointer.execute('''SELECT * FROM User''')
         result = self.pointer.fetchall()  # retrieve the first row

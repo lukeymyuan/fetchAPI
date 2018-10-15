@@ -1,39 +1,89 @@
 from flask import Flask, request
 from flask_restplus import Resource, Api, fields, reqparse
 from database import *
+from Authentication import *
+from itsdangerous import JSONWebSignatureSerializer, SignatureExpired, BadSignature
+from functools import wraps
+#Sets up api token and where it should be
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'API-KEY'
+    }
+}
 
 
 app = Flask(__name__)
-api = Api(app)
+#Creates the app for flask
+api = Api(app,
+          authorizations=authorizations)
+#initiates database
 db = Database()
 
+#Creates the JSONWebSerializer
+private_key = "Highway is so far away"
+encryptor = Encryptor(private_key)
+
 # The following is a model for a user
-User_model = api.model('User', {
+Login_model = api.model('Login', {
     'username': fields.String,
     'password': fields.String,
 })
 
+#Parsers for username and password
+authenticate_parser = reqparse.RequestParser()
+authenticate_parser.add_argument('username', type=str)
+authenticate_parser.add_argument('password', type=str)
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        db.restartPointer()
+        auth = request.headers.get('API-KEY')
+        if not auth:  # no header set
+            api.abort(401,"No token")
+        try:
+            payload = encryptor.decrypt(auth)
+        except SignatureExpired as e:
+            print(e)
+        except BadSignature as e:
+            print("Invalid Token")
+
+        user = payload.get("username")
+        password = payload.get("password")
+
+        if not db.AuthenticateUser(user,password):
+            api.abort(401,"Username/Password is incorrect")
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+
 @api.route('/predict')
-@api.doc(description="Predicts the revenue of a movie based on its features")
-@api.response(200, 'Successful')
 class Revenue(Resource):
     #Uses machine learning to find the revenue of the movie
+    @api.doc(description="Predicts the revenue of a movie based on its features")
+    @api.response(200, 'Successful')
+    @login_required
+    @api.doc(security='apikey')
     def post(self):
         return {'Revenue': 90000000},200
 
 
 
 @api.route('/signup')
-@api.doc(description="Signs up the user so they can log in")
-class Login(Resource):
+class SignUp(Resource):
     # signs up the user
-    @api.expect(User_model)
+    @api.doc(description="Signs up the user so they can log in")
+    @api.expect(Login_model)
     def post(self):
         #Flask creates a new thread, therefore, need to recreate cursor object
         db.restartPointer()
-        content = request.json
-        username = content.get("username")
-        password = content.get("password")
+        args = authenticate_parser.parse_args()
+        username = args.get('username')
+        password = args.get('password')
         #Enters details into the system
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
@@ -42,6 +92,18 @@ class Login(Resource):
         else:
             return {False:result},200
 
+@api.route('/Login')
+class Authenticate(Resource):
+    @api.expect(Login_model)
+    def post(self):
+        db.restartPointer()
+        args = authenticate_parser.parse_args()
+        username = args.get('username')
+        password = args.get('password')
+        if db.AuthenticateUser(username,password):
+            return  {True: encryptor.encrypt(username,password).decode()},200
+        else:
+            return {False : "Either username doesn't exist or password is wrong"},200
 
 
 if __name__ == '__main__':
