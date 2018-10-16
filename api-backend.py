@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restplus import Resource, Api, fields, reqparse
 from database import *
-from Authentication import *
+from authentication import *
 from itsdangerous import JSONWebSignatureSerializer, SignatureExpired, BadSignature
 from functools import wraps
 #TODO Edit endpints so that they are valid
@@ -30,7 +30,7 @@ private_key = "Highway is so far away"
 encryptor = Encryptor(private_key)
 
 # The following is a model for a user
-Login_model = api.model('Login', {
+login_model = api.model('login', {
     'username': fields.String,
     'password': fields.String,
 })
@@ -79,8 +79,9 @@ class Revenue(Resource):
 @api.route('/signup')
 class SignUp(Resource):
     # signs up the user
+    @api.response(201, 'New user added to a db')
     @api.doc(description="Signs up the user so they can log in")
-    @api.expect(Login_model)
+    @api.expect(login_model)
     def post(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
@@ -89,13 +90,16 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {True:"Succesfully added into database"},200
+            return {True:"Succesfully added into database"},201
         else:
-            return {False:result},200
+            return {False:result},400
 
-@api.route('/Login')
+@api.route('/login')
 class Authenticate(Resource):
-    @api.expect(Login_model)
+    @api.response(200, 'Successful')
+    @api.response(400, 'Incorrect login details')
+    @api.doc(description="Login form for users")
+    @api.expect(login_model)
     def post(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
@@ -103,7 +107,7 @@ class Authenticate(Resource):
         if db.AuthenticateUser(username,password):
             return  {True: encryptor.encrypt(username,password)},200
         else:
-            return {False : "Either username doesn't exist or password is wrong"},200
+            return {False : "Either username doesn't exist or password is wrong"},400
 
 
 if __name__ == '__main__':
