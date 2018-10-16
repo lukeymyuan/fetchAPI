@@ -1,6 +1,6 @@
 import sqlite3
 import re
-
+#TODO fix so that if the file doesnt exist, to create the file
 file_name = "Users.db"
 class Database(object):
     def __init__(self):
@@ -25,6 +25,8 @@ class Database(object):
 
 
     def enterUser(self,username,password):
+        #Flask creates a new thread, therefore, need to recreate cursor object
+        self.restartPointer()
         if username and password:
             #Regex to see if the password is using valid characters
             found = re.match(r'^(\w|\+|\*|\?|\^|\$|\.|\[|\]|\{|\}|\(|\)|\/)+$', password, re.M | re.I)
@@ -41,6 +43,7 @@ class Database(object):
             else:
                 #if it is all valid, adds the username and password to the database
                 self.pointer.execute('''INSERT INTO User VALUES (?,?)''',(username,password))
+                print("successfully added ")
                 self.conn.commit()
                 error=None
         else:
@@ -49,16 +52,19 @@ class Database(object):
         return error
 
     def AuthenticateUser(self,username,password):
+        #Flask creates a new thread, therefore, need to recreate cursor object
+        self.restartPointer()
         self.pointer.execute('''SELECT password FROM User WHERE email= (?)''', (username,))
         result= self.pointer.fetchone()
-        if len(result) > 0:
+        if result:
             passFind = result[0]
-            print("pass" + passFind)
             if passFind == password:
                 return True
         return False
 
     def printer(self):
+        #Flask creates a new thread, therefore, need to recreate cursor object
+        self.restartPointer()
         self.pointer.execute('''SELECT * FROM User''')
         result = self.pointer.fetchall()  # retrieve the first row
         print(result)  # Print the first column retrieved(user's name)
@@ -66,8 +72,8 @@ class Database(object):
 
 if __name__ == '__main__':
     db = Database()
-    db.enterUser("phb136", "potato")
-    db.enterUser("kenrokzz", "potato")
-    db.enterUser("phb136", "potato")
-    db.enterUser("phb136adasd", "potato")
+    db.enterUser("phb136", "potato1")
+    db.enterUser("kenrokzz", "potato1")
+    db.enterUser("phb136", "potato1")
+    db.enterUser("phb136adasd", "potato1")
     db.printer()

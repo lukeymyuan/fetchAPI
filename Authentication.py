@@ -1,11 +1,12 @@
 from itsdangerous import JSONWebSignatureSerializer, SignatureExpired, BadSignature
 import datetime
 from datetime import timedelta
-import time
 from datetime import datetime
 
-from datetime import datetime
-
+#What is sent in the creation time
+timeformat = "%Y-%m-%d %H:%M:%S.%f"
+#Time token stays alive before it
+time_expiry = 30
 class Encryptor(object):
     def __init__(self,private_key):
         self.serial = JSONWebSignatureSerializer(private_key)
@@ -14,30 +15,16 @@ class Encryptor(object):
         result = {
             'username': username,
             'password': password,
-            'creation-time': str(datetime.now())
+            'creation-time': datetime.now().strftime(timeformat)
         }
-        # jsonResult = json.dumps(result)
-        return self.serial.dumps(result)
+        #convert it into a token(bytes) -> decode to convert to string
+        return self.serial.dumps(result).decode()
 
     def decrypt(self,token):
-        # sig checks if the data is valid and not unsafe
-        payload = self.serial.loads(token)
-        create = payload.get('creation-time')
-        if datetime.now() > datetime.strptime(create, "%Y-%m-%d %H:%M:%S.%f") + timedelta(minutes=30):
+        # converts the token back from string to bytes and then loading it using the JSON serialiser
+        payload = self.serial.loads(token.encode())
+        time_stamp = payload.get('creation-time')
+        if datetime.now() > datetime.strptime(time_stamp, timeformat) + timedelta(minutes=time_expiry):
             raise SignatureExpired("Token created more than 10 seconds ago")
         return payload
 
-    if __name__ == '__main__':
-        token = parseUsername("admin", "admin")
-        print("Creates the token " + str(token))
-        print("Converting token")
-        try:
-            decryptToken(token)
-            time.sleep(10)
-            decryptToken(token)
-            decryptToken("sjsjsjjsjs")
-
-        except SignatureExpired as e:
-            print(e)
-        except BadSignature as e:
-            print("Invalid Token")

@@ -4,6 +4,10 @@ from database import *
 from Authentication import *
 from itsdangerous import JSONWebSignatureSerializer, SignatureExpired, BadSignature
 from functools import wraps
+#TODO Edit endpints so that they are valid
+#TODO make sure that the status code are the codes that we want
+#TODO possibly store the tokens into another key, look at standard api to ensure those are the correct end points
+
 #Sets up api token and where it should be
 authorizations = {
     'apikey': {
@@ -39,16 +43,15 @@ authenticate_parser.add_argument('password', type=str)
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        db.restartPointer()
         auth = request.headers.get('API-KEY')
         if not auth:  # no header set
-            api.abort(401,"No token")
+            api.abort(401,"No access since you are not logged in")
         try:
             payload = encryptor.decrypt(auth)
-        except SignatureExpired as e:
-            print(e)
-        except BadSignature as e:
-            print("Invalid Token")
+        except SignatureExpired:
+            api.abort(401,"Token expired, please login again")
+        except BadSignature:
+            api.abort(401,"Invalid Token")
 
         user = payload.get("username")
         password = payload.get("password")
@@ -79,8 +82,6 @@ class SignUp(Resource):
     @api.doc(description="Signs up the user so they can log in")
     @api.expect(Login_model)
     def post(self):
-        #Flask creates a new thread, therefore, need to recreate cursor object
-        db.restartPointer()
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')
@@ -96,12 +97,11 @@ class SignUp(Resource):
 class Authenticate(Resource):
     @api.expect(Login_model)
     def post(self):
-        db.restartPointer()
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {True: encryptor.encrypt(username,password).decode()},200
+            return  {True: encryptor.encrypt(username,password)},200
         else:
             return {False : "Either username doesn't exist or password is wrong"},200
 
