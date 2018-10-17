@@ -3,12 +3,16 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request');
 var http = require('http');
+var exphbs  = require('express-handlebars');
+
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 app.use(express.static('public'));
 app.use(urlencodedParser)
+app.engine('handlebars', exphbs({defaultLayout: 'result'}));
+app.set('view engine', 'handlebars');
 
 app.get('/', (req, res) => {
    res.sendFile( __dirname + "/" + "signup.html" );
@@ -57,7 +61,14 @@ app.get('/login', (req, res) => {
  })
 
  app.get('/result', (req, res) => {
-    res.sendFile( __dirname + "/" + "result.html" );
+   request.post('http://127.0.0.1:5000/predict',
+   function (error, response, body) {
+     console.log('error:', error); // Print the error if one occurred
+     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+     console.log('body:', body); // Print the HTML for the Google homepage.
+     res.render('result',{user:body})
+   });
+    //res.sendFile( __dirname + "/" + "result.html" );
  })
 
 
