@@ -90,8 +90,9 @@ body {
   text-align: center;
   height: 10%;
   border-bottom: .25rem solid transparent;
-  border-bottom-color: #9cbbc8
+  border-bottom-color: #9cbbc8;
 }
+
 
 /*
  * Footer
@@ -138,6 +139,18 @@ body {
   border: 2px solid dodgerblue;
 }
 
+.redirectlink{
+  text-align: right;
+  border-bottom: 3px solid #00CED1;
+  padding-bottom: 5px;
+}
 
+.noborder{
+  border: 0px;
+}
+
+.redirectlink:hover{
+  color: #99bde4;
+}
 
 
