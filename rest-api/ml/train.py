@@ -1,5 +1,5 @@
 '''Trains the revenue prediction model from the movies dataset'''
-
+import sys
 import pandas as pd
 from sklearn import linear_model
 from sklearn.externals import joblib
@@ -24,7 +24,7 @@ def extract_features(df):
 
 
 if __name__ == '__main__':
-    movie_df = pd.read_csv('movies_v1.csv')
+    movie_df = pd.read_csv(sys.argv[1])
     
     X = extract_features(movie_df)
     y = movie_df['revenue']

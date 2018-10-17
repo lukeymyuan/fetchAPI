@@ -74,3 +74,6 @@ typings/
 
 #pycache
 */__pycache__/
+Pipfile.lock
+*.pk1
+

@@ -26,7 +26,7 @@ def predict_revenue(movie: dict):
     movie_df = movie_df.drop(columns=['release_month'])
     movie_df = pd.concat([movie_df, month_encoding], axis=1)
 
-    print(movie_df)
+    # print(movie_df)
 
     pred = model.predict(movie_df)
     return pred[0]
