@@ -6,7 +6,7 @@ from datetime import datetime
 #What is sent in the creation time
 timeformat = "%Y-%m-%d %H:%M:%S.%f"
 #Time token stays alive before it
-time_expiry = 30
+time_expiry = 3600
 class Encryptor(object):
     def __init__(self,private_key):
         self.serial = JSONWebSignatureSerializer(private_key)

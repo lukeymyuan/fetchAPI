@@ -105,9 +105,9 @@ class Authenticate(Resource):
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {True: encryptor.encrypt(username,password)},200
+            return  {"success": True, "api-key": encryptor.encrypt(username,password)},200
         else:
-            return {False : "Either username doesn't exist or password is wrong"},400
+            return {"success" : False, "error": "Either username doesn't exist or password is wrong"},400
 
 
 if __name__ == '__main__':
