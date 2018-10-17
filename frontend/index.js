@@ -15,7 +15,7 @@ app.engine('handlebars', exphbs({defaultLayout: 'result'}));
 app.set('view engine', 'handlebars');
 
 app.get('/', (req, res) => {
-   res.sendFile( __dirname + "/" + "signup.html" );
+   res.render('signup')
 })
 
 app.post('/', (req, res)=> {
@@ -26,11 +26,11 @@ app.post('/', (req, res)=> {
       confirm_password: req.body.cpassword
    };
    console.log(response);
-   res.redirect('/login')
+   res.redirect('login')
 })
 
 app.get('/login', (req, res) => {
-    res.sendFile( __dirname + "/" + "login.html" );
+    res.render('login')
  })
 
 app.post('/login', (req, res)=> {
@@ -40,11 +40,11 @@ app.post('/login', (req, res)=> {
        password:req.body.password
     };
     console.log(response);
-    res.redirect('/predict')
+    res.redirect('prediction')
  })
 
 app.get('/prediction', (req, res) => {
-    res.sendFile( __dirname + "/" + "prediction.html" );
+    res.render('prediction')
  })
 
 app.post('/prediction', (req, res)=> {
@@ -57,7 +57,7 @@ app.post('/prediction', (req, res)=> {
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       console.log('body:', body); // Print the HTML for the Google homepage.
     });
-    res.redirect('/result')
+    res.redirect('result')
  })
 
  app.get('/result', (req, res) => {
@@ -68,18 +68,13 @@ app.post('/prediction', (req, res)=> {
      console.log('body:', body); // Print the HTML for the Google homepage.
      res.render('result',{user:body})
    });
-    //res.sendFile( __dirname + "/" + "result.html" );
  })
 
 // Handle 404
 app.use((req, res) =>{
-  res.status(404).sendFile(__dirname + "/"+'404.html');
+  res.status(404).render('404')
 });
 
-// Handle 500
-app.use((error, req, res, next)=> {
-  res.status(500).sendFile(__dirname + +"/"+'500.html');
-});
 
 var server = app.listen(8081, function () {
    var host = server.address().address
