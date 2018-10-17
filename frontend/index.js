@@ -11,7 +11,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 app.use(express.static('public'));
 app.use(urlencodedParser)
-app.engine('handlebars', exphbs({defaultLayout: 'result'}));
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.get('/', (req, res) => {
@@ -61,7 +61,7 @@ app.post('/prediction', (req, res)=> {
  })
 
  app.get('/result', (req, res) => {
-   request.post('http://127.0.0.1:5000/predict',
+   request.post('prediction',
    function (error, response, body) {
      console.log('error:', error); // Print the error if one occurred
      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received

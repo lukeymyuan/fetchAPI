@@ -1,19 +1,10 @@
 <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand"><i class="fas fa-film"></i> Movie Paradise </h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link active" href="http://127.0.0.1:8081/login">Login </a>
-            <a class="nav-link" href="http://127.0.0.1:8081/">Sign Up</a>
-            <a class="nav-link" href="http://127.0.0.1:8081/prediction">Prediction</a>
-          </nav>
-        </div>
-      </header>
+        {{>nav}}
         <h2 class="normal-heading">Login in</h2> 
-            <a class="redirectlink noborder"href="http://127.0.0.1:8081/" style="text-align:right">Click Here to Sign up</a>
-          <form action="http://127.0.0.1:8081/login" method="POST">
+            <a class="redirectlink noborder"href="/" style="text-align:right">Click Here to Sign up</a>
+          <form action="login" method="POST">
             <div class="form-group">
               <label>Username</label>
               <input name="username" type="username" class="form-control" placeholder="Enter Username" required>
@@ -29,11 +20,7 @@
             <button type="submit" class="btn btn-success">Login</button>
           </form>
 
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          Copyright <i class="far fa-copyright"></i> FetchApi
-        </div>
-      </footer>
+        {{>footer}}
     </div>
 
 

@@ -1,26 +1,11 @@
   <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand"><i class="fas fa-film"></i> Movie Paradise </h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link active" href="http://127.0.0.1:8081/login">Login </a>
-            <a class="nav-link" href="http://127.0.0.1:8081/">Sign Up</a>
-            <a class="nav-link" href="http://127.0.0.1:8081/prediction">Prediction</a>
-          </nav>
-        </div>
-      </header>
+        {{>nav}}
         <h1 style="text-align: center;"><i class="fas fa-3x fa-question-circle"></i></h1>
         <h2 style="padding-top:5%">404 NOT FOUND</h2>
-        <a class="redirectlink" href="http://127.0.0.1:8081/login"><i class="fas fa-angle-right"></i> Redirect To Login Page</a>
-      
-
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          Copyright <i class="far fa-copyright"></i> FetchApi
-        </div>
-      </footer>
+        <a class="redirectlink" href="login"><i class="fas fa-angle-right"></i> Redirect To Login Page</a>
+        {{>footer}}
     </div>
 
 
