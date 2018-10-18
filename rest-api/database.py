@@ -2,6 +2,8 @@ import sqlite3
 import re
 #TODO fix so that if the file doesnt exist, to create the file
 file_name = "datahouse.db"
+posterPrefix = ""
+
 class Database(object):
     def __init__(self):
         self.conn = sqlite3.connect(file_name)
@@ -69,14 +71,38 @@ class Database(object):
     def findMovie(self,revenue):
         #please fix it up, right now they want to return only 3 movies
         self.restartPointer()
-        command = '''
-                    SELECT poster_path FROM
+        command1 = '''
+                    SELECT title,revenue,posterPath FROM
                     Main
                     WHERE
-                    AGE >= 25
-                    AND
-                    SALARY >= 65000
+                    revenue >= (?)
+                    ORDER BY revenue
+                    ASC LIMIT 3
              '''
+        self.pointer.execute(command1,(revenue,))
+        result1 = self.pointer.fetchall()
+        command2 = '''
+                    SELECT title,revenue,posterPath FROM
+                    Main
+                    WHERE
+                    revenue < (?)
+                    ORDER BY revenue
+                    ASC LIMIT 3
+
+                    '''
+        self.pointer.execute(command2,(revenue,))
+        result2 = self.pointer.fetchall()
+        resultList=list()
+        resultList.extend(result1)
+        resultList.extend(result2)
+        for movie in resultList:
+            percent = abs(revenue - movie[1])/revenue
+            mo
+            movie.append(percent)
+        sortedList = sorted(resultList, lambda x: x[1])
+        print(sortedList)
+
+
 
     def printer(self):
         #Flask creates a new thread, therefore, need to recreate cursor object
@@ -89,8 +115,4 @@ class Database(object):
 
 if __name__ == '__main__':
     db = Database()
-    db.enterUser("phb136", "potato1")
-    db.enterUser("kenrokzz", "potato1")
-    db.enterUser("phb136", "potato1")
-    db.enterUser("phb136adasd", "potato1")
-    db.printer()
+    db.findMovie(900000)
