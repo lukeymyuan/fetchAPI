@@ -7,28 +7,43 @@
                     <label class="input-label">Budget</label>
                     <input name="budget" type="number" min="0" class="input-field mr-auto" placeholder="Enter the budget of the movie" required>
               </div>
-              <div class="col mt-4">
-                <label class="input-label" style="margin-right:8%;">Cast</label>
-                <input name="cast" type="text" class="input-field ml-auto" placeholder="Enter the cast of the movie" required>
+              <div class="row">
+                  <div class="col mt-4">
+                    <label class="input-label" style="margin-left:5%;">Cast1</label>                    
+                    <input name="cast1" type="text" class="input-field ml-auto" placeholder="Enter the Cast of the movie">
+                  </div>
+                  <div class="col mt-4">
+                    <label class="input-label" style="margin-right:%;">Cast2</label>                    
+                    <input name="cast2" type="text" class="input-field ml-auto" placeholder="Option">
+                  </div>
               </div>
+              <div class="row">
+                  <div class="col mt-4">
+                    <label class="input-label" style="margin-left:7.5%;">Cast3</label>                    
+                    <input name="cast3" type="text" class="input-field ml-auto" placeholder="Option">
+                  </div>
+                  <div class="col mt-4">
+                    <label class="input-label" style="margin-right:%;">Cast4</label>                    
+                    <input name="cast4" type="text" class="input-field ml-auto" placeholder="Option">
+                  </div>
+                  <div class="col mt-4">
+                    <label class="input-label" style="margin-left:%;">Cast5</label>                    
+                    <input name="cast5" type="text" class="input-field ml-auto" placeholder="Option">
+                  </div>                  
+              </div>                             
               <div class="col mt-4">
                 <label class="input-label" style="margin-right:5%;">Length</label>
                 <input name="length" type="text" class="input-field ml-auto" placeholder="Enter the length of the movie" required>
               </div>
               <div class="col mt-4">
-                <label class="input-label" style="margin-right:4%;">Country</label>
-                <input name="country" type="text" class="input-field ml-auto" placeholder="Enter the country of the movie" required>
+                <label class="input-label" style="margin-right:2%;">Release Month</label>
+                <input name="month" type="number" min="0" max="12" class="input-field ml-auto" placeholder="Enter the release date of the movie" required>
               </div>
               <div class="col mt-4">
-                <label class="input-label" style="margin-right:4%;">Director</label>
-                <input name="director" type="text" class="input-field ml-auto" placeholder="Enter the director of the movie" required>
-              </div>
-              <div class="col mt-4">
-                <label class="input-label" style="margin-right:2%;">Release Date</label>
-                <input name="date" type="date" class="input-field ml-auto" placeholder="Enter the release date of the movie" required>
-              </div>
-              <br>
-              <button type="submit" class="btn btn-outline-primary mt-4">Submit</button>
+                <label class="input-label" style="margin-right:2%;">Is it in English</label>
+                <input name="english" type="checkbox" class="input-field ml-auto" placeholder="Enter the release date of the movie" required>
+              </div>              
+              <button type="submit" class="btn btn-outline-primary mt-4 float-right">Submit</button>
             </form>
         {{>footer}}
       </div>
