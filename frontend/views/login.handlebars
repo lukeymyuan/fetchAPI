@@ -5,6 +5,7 @@
         <h2 class="normal-heading">Login in</h2> 
             <a class="redirectlink noborder"href="/" style="text-align:right">Click Here to Sign up</a>
           <form action="login" method="POST">
+            {{> message}}
             <div class="form-group">
               <label>Username</label>
               <input name="username" type="username" class="form-control" placeholder="Enter Username" required>
@@ -17,7 +18,7 @@
               <input type="checkbox" class="form-check-input" id="exampleCheck1">
               <label class="form-check-label" for="exampleCheck1">Remeber Me</label>
             </div>
-            <button type="submit" class="btn btn-success">Login</button>
+            <button type="submit" class="btn btn-success">Login</button>           
           </form>
 
         {{>footer}}
