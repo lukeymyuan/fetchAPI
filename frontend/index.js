@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var request = require('request');
-var http = require('http');
 var exphbs  = require('express-handlebars');
 var session = require('express-session')
 var flash = require('connect-flash')
@@ -136,9 +135,7 @@ app.use((req, res) =>{
 
 
 var server = app.listen(8081, function () {
-   var host = server.address().address
    var port = server.address().port
-
-   console.log("Example app listening at http://%s:%s", host, port)
+   console.log(`Example app listening at http://127.0.0.1:${port}`)
 
 })
