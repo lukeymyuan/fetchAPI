@@ -34,7 +34,7 @@ class Database(object):
             self.pointer.execute('''SELECT * FROM User WHERE email= (?)''', (username,))
             result = self.pointer.fetchone()
 
-            if len(password) < 7:
+            if len(password) < 6:
                 error = "Password length is too short, needs to be more than 6 characters"
             elif not found:
                 error="Password using invalid characters"
