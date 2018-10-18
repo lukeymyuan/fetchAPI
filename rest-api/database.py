@@ -66,6 +66,8 @@ class Database(object):
                 return True
         return False
 
+    def findMovie
+
     def printer(self):
         #Flask creates a new thread, therefore, need to recreate cursor object
         self.restartPointer()

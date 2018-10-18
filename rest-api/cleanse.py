@@ -32,7 +32,8 @@ if __name__ == '__main__':
                         releaseYear INTEGER,
                         releaseMonth INTEGER,
                         revenue INTEGER,
-                        runtime TEXT
+                        runtime INTEGER,
+                        posterPath TEXT
                         )
                     '''
     pointer.execute(createMovie)
@@ -41,8 +42,9 @@ if __name__ == '__main__':
                        row['original_language'],row['english'],
                        row['production_companies'],row['production_countries'],
                        row['release_year'],row['release_month'], row['revenue'],
-                       row['runtime'])
+                       row['runtime'],row['poster_path'])
 
-        pointer.execute('''INSERT INTO Main VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', insertValue)
+        pointer.execute('''INSERT INTO Main VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''', insertValue)
     conn.commit()
+    printer(pointer)
     conn.close()

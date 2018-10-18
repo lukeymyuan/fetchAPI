@@ -49,6 +49,10 @@ predict_parser.add_argument('release_month', type=int, required=True, help='Rele
 predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
 predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
 
+#Parser to show the movie
+movie_parser = reqparse.RequestParser()
+movie_parser.add.argument('revenue',type=int,required=True,help='Similar revenue')
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -83,6 +87,29 @@ class Revenue(Resource):
         args['english'] = True if args['english'] == 'True' else False
         revenue = int(predict_revenue(args))
         return {'revenue':revenue}, 200
+
+@api.route('/movies')
+class Movies(Resource):
+    #Returns a list of movies that are the most similar to the current revenue
+    @api.doc(description="Shows a list of movies that have the most similar revenue")
+    @api.response(200,'Successfully found movies')
+    @login_required
+    @api.doc(security='apikey')
+    def post(self):
+        args = movie_parser.parse_args()
+        revenue = args['revenue']
+        if revenue <= 0:
+            api.abort(400,"Revenue has to be greater than zero")
+        '''
+            {'movie':
+                    {'revenue':5000},
+                    {'poster': link},
+            }
+        '''
+        movieList = findMovie(revenue)
+        return {'success':True, movieList},200
+
+
 
 @api.route('/signup')
 class SignUp(Resource):
