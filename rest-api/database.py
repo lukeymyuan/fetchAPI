@@ -2,7 +2,7 @@ import sqlite3
 import re
 #TODO fix so that if the file doesnt exist, to create the file
 file_name = "datahouse.db"
-posterPrefix = ""
+posterPrefix = "https://image.tmdb.org/t/p/w342"
 
 class Database(object):
     def __init__(self):
@@ -69,39 +69,49 @@ class Database(object):
         return False
 
     def findMovie(self,revenue):
-        #please fix it up, right now they want to return only 3 movies
         self.restartPointer()
-        command1 = '''
-                    SELECT title,revenue,posterPath FROM
+        command = '''
+                    SELECT title,revenue,posterPath, abs(revenue-(?))*100/(?)*100 AS diff FROM
                     Main
-                    WHERE
-                    revenue >= (?)
-                    ORDER BY revenue
+                    ORDER BY diff
                     ASC LIMIT 3
              '''
-        self.pointer.execute(command1,(revenue,))
-        result1 = self.pointer.fetchall()
-        command2 = '''
-                    SELECT title,revenue,posterPath FROM
-                    Main
-                    WHERE
-                    revenue < (?)
-                    ORDER BY revenue
-                    ASC LIMIT 3
+        self.pointer.execute(command,(revenue,revenue,))
+        result = self.pointer.fetchall()
+        print(result)
+        # command2 = '''
+        #             SELECT title,revenue,posterPath FROM
+        #             Main
+        #             WHERE
+        #             revenue < (?)
+        #             ORDER BY revenue
+        #             ASC LIMIT 3
+        #
+        #             '''
+        # self.pointer.execute(command2,(revenue,))
+        # result2 = self.pointer.fetchall()
+        # resultList=list()
+        # for i in result1:
+        #     resultList.append(list(i))
+        # for i in result2:
+        #     resultList.append(list(i))
+        # for movie in resultList:
+        #     percent = abs(revenue - movie[1])/revenue
+        #     movie.append(percent)
+        # sortedList = sorted(resultList, key=lambda x: x[3])
+        movieList = list()
+        for movie in result:
+            movieElement = {
+                'movie': movie[0],
+                'revenue': movie[1],
+                'poster': posterPrefix+movie[2],
+            }
+            movieList.append(movieElement)
 
-                    '''
-        self.pointer.execute(command2,(revenue,))
-        result2 = self.pointer.fetchall()
-        resultList=list()
-        for i in result1:
-            resultList.append(list(i))
-        for i in result2:
-            resultList.append(list(i))
-        for movie in resultList:
-            percent = abs(revenue - movie[1])/revenue
-            movie.append(percent)
-        sortedList = sorted(resultList, lambda x: x[3])
-        print(sortedList)
+        # print("Sorted list" + str(sortedList))
+        print("final list" + str(movieList))
+        return movieList
+
 
 
 

@@ -102,9 +102,9 @@ class Movies(Resource):
             api.abort(400,"Revenue has to be greater than zero")
         '''
             list of these movies
-            {nameOfMovie:
-                    {'revenue':5000},
-                    {'poster': link},
+            {'movie': 'name},
+            {'revenue':5000},
+            {'poster': link},
             }
         '''
         movieList = db.findMovie(revenue)
