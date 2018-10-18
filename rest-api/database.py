@@ -66,7 +66,17 @@ class Database(object):
                 return True
         return False
 
-    def findMovie
+    def findMovie(self,revenue):
+        #please fix it up, right now they want to return only 3 movies
+        self.restartPointer()
+        command = '''
+                    SELECT poster_path FROM
+                    Main
+                    WHERE
+                    AGE >= 25
+                    AND
+                    SALARY >= 65000
+             '''
 
     def printer(self):
         #Flask creates a new thread, therefore, need to recreate cursor object
