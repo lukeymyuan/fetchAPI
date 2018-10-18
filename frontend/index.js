@@ -4,15 +4,29 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var http = require('http');
 var exphbs  = require('express-handlebars');
+var session = require('express-session')
+var flash = require('connect-flash')
+
 
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
+app.use(session({
+  secret:"fetchAPI",
+  resave: true,
+  saveUninitialized:true
+}))
+app.use(flash())
 app.use(express.static('public'));
 app.use(urlencodedParser)
+
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
+
+app.use((req,res,next)=>{
+  res.locals.error_message = req.flash('error_message')
+  next();
+})
 
 app.get('/', (req, res) => {
    res.render('signup')
@@ -54,11 +68,13 @@ app.post('/login', (req, res)=> {
           if(!error){
             resolve(response.statusCode);
           } else{
-            reject("failure");
+            req.flash('error_message','Server Error, Please Contact to Admin fetchAPI@unsw.edu.au')        
+            res.redirect(req.originalUrl)
           }
         })
     }).then((statusCode)=>{
       if (statusCode==400){
+        req.flash('error_message','Incorrect username or password')        
         res.redirect(req.originalUrl)
       }
       res.redirect('prediction');
@@ -88,6 +104,7 @@ app.post('/prediction', (req, res)=> {
     //     "Cast2": req.body.cast2,
     //     "Cast3": req.body.cast3,
     //     "Cast4": req.body.cast4,
+    //     "Cast5": req.body.cast5,
     //     "Length": req.body.length,
     //     "Month": req.body.month,
     //     "IsEnglish": IsEnglish,  
