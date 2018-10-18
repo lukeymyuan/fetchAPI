@@ -1,35 +1,8 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="FetchApi">
-    <meta name="author" content="FetchApi">
-
-    <title>FetchApi - Prediction</title>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <!-- Custom styles for this template -->
-    <link href="/style.css" rel="stylesheet">
-  </head>
-
   <body>
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <header class="masthead mb-auto">
-          <div class="inner">
-            <h3 class="masthead-brand"><i class="fas fa-film"></i> Movie Paradise </h3>
-            <nav class="nav nav-masthead justify-content-center">
-              <a class="nav-link" href="http://127.0.0.1:8081/login">Login </a>
-              <a class="nav-link" href="http://127.0.0.1:8081/">Sign Up</a>
-              <a class="nav-link active" href="http://127.0.0.1:8081/prediction">Prediction</a>
-            </nav>
-          </div>
-        </header>
+        {{>nav}}
           <h2 class="normal-heading">Prediction</h2>
-            <form action="http://127.0.0.1:8081/prediction" method="POST">
+            <form action="prediction" method="POST">
               <div class="col mt-4">
                     <label class="input-label">Budget</label>
                     <input name="budget" type="number" min="0" class="input-field mr-auto" placeholder="Enter the budget of the movie" required>
@@ -57,15 +30,8 @@
               <br>
               <button type="submit" class="btn btn-outline-primary mt-4">Submit</button>
             </form>
-
-        <footer class="mastfoot mt-auto">
-          <div class="inner">
-            Copyright <i class="far fa-copyright"></i> FetchApi
-          </div>
-        </footer>
+        {{>footer}}
       </div>
-
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -73,5 +39,3 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   </body>
-</html>
-
