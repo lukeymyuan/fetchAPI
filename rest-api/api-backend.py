@@ -78,7 +78,7 @@ class Revenue(Resource):
     @api.response(200, 'Successful')
     @login_required
     @api.doc(security='apikey')
-    def get(self):
+    def post(self):
         args = predict_parser.parse_args()
         args['english'] = True if args['english'] == 'True' else False
         revenue = int(predict_revenue(args))
