@@ -108,7 +108,7 @@ class Movies(Resource):
             }
         '''
         movieList = db.findMovie(revenue)
-        return {'success':True, movieList},200
+        return {'success':True, 'movieList': movieList},200
 
 
 
