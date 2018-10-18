@@ -1,7 +1,7 @@
 import sqlite3
 import re
 #TODO fix so that if the file doesnt exist, to create the file
-file_name = "Users.db"
+file_name = "datahouse.db"
 class Database(object):
     def __init__(self):
         self.conn = sqlite3.connect(file_name)
@@ -12,6 +12,10 @@ class Database(object):
         self.conn = sqlite3.connect(file_name)
         self.pointer = self.conn.cursor()
 
+    def save(self):
+        self.conn.commit()
+        self.conn.close()
+
     def initiate(self):
         UserTable = ''' CREATE TABLE IF NOT EXISTS User(
                             email TEXT PRIMARY KEY NOT NULL,
@@ -20,8 +24,7 @@ class Database(object):
                         '''
 
         self.pointer.execute(UserTable)
-        self.conn.commit()
-
+        self.save()
 
 
     def enterUser(self,username,password):
@@ -44,7 +47,7 @@ class Database(object):
                 #if it is all valid, adds the username and password to the database
                 self.pointer.execute('''INSERT INTO User VALUES (?,?)''',(username,password))
                 print("successfully added ")
-                self.conn.commit()
+                self.save()
                 error=None
         else:
             error = "Username or password is not valid"
@@ -56,6 +59,7 @@ class Database(object):
         self.restartPointer()
         self.pointer.execute('''SELECT password FROM User WHERE email= (?)''', (username,))
         result= self.pointer.fetchone()
+        self.conn.close()
         if result:
             passFind = result[0]
             if passFind == password:
@@ -68,6 +72,7 @@ class Database(object):
         self.pointer.execute('''SELECT * FROM User''')
         result = self.pointer.fetchall()  # retrieve the first row
         print(result)  # Print the first column retrieved(user's name)
+        self.conn.close()
 
 
 if __name__ == '__main__':
