@@ -4,6 +4,8 @@ from database import *
 from authentication import *
 from itsdangerous import JSONWebSignatureSerializer, SignatureExpired, BadSignature
 from functools import wraps
+from ml.prediction import predict_revenue
+
 #TODO Edit endpints so that they are valid
 #TODO make sure that the status code are the codes that we want
 #TODO possibly store the tokens into another key, look at standard api to ensure those are the correct end points
@@ -40,6 +42,13 @@ authenticate_parser = reqparse.RequestParser()
 authenticate_parser.add_argument('username', type=str)
 authenticate_parser.add_argument('password', type=str)
 
+#Parser for a prediction
+predict_parser = reqparse.RequestParser()
+predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
+predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
+predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
+predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -62,8 +71,6 @@ def login_required(f):
 
     return decorated
 
-
-
 @api.route('/predict')
 class Revenue(Resource):
     #Uses machine learning to find the revenue of the movie
@@ -72,9 +79,10 @@ class Revenue(Resource):
     @login_required
     @api.doc(security='apikey')
     def post(self):
-        return {'Revenue': 90000000},200
-
-
+        args = predict_parser.parse_args()
+        args['english'] = True if args['english'] == 'True' else False
+        revenue = int(predict_revenue(args))
+        return {'revenue':revenue}, 200
 
 @api.route('/signup')
 class SignUp(Resource):
@@ -100,7 +108,7 @@ class Authenticate(Resource):
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
-    def post(self):
+    def get(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')
