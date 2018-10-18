@@ -93,13 +93,14 @@ class Database(object):
         self.pointer.execute(command2,(revenue,))
         result2 = self.pointer.fetchall()
         resultList=list()
-        resultList.extend(result1)
-        resultList.extend(result2)
+        for i in result1:
+            resultList.append(list(i))
+        for i in result2:
+            resultList.append(list(i))
         for movie in resultList:
             percent = abs(revenue - movie[1])/revenue
-            mo
             movie.append(percent)
-        sortedList = sorted(resultList, lambda x: x[1])
+        sortedList = sorted(resultList, lambda x: x[3])
         print(sortedList)
 
 
