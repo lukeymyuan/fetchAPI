@@ -1,20 +1,26 @@
 # fetchAPI
 For the frontend:
-    - Download Nodejs from https://nodejs.org/en/download/
-    - npm i (To install all packages for enviroment)
-    - node index.js
-    - (Option) install nodemon to monitor the changes in client
-    ```
-    nodemon index.js or nodemon . 
-    ```
-    - If it shows
-    ```
-    nodemon: not found
-    ```
-    -Then 
-    ```
-    npm install -g nodemon
-    ```
+1. Download Nodejs from https://nodejs.org/en/download/
+2. install all packages for enviroment
+```
+npm i
+```
+3. Execute
+```
+node index.ks
+```
+(Option) install nodemon to monitor the changes in client
+```
+nodemon index.js or nodemon . 
+```
+If it shows
+```
+nodemon: not found
+```
+Then 
+```
+npm install -g nodemon
+```
 
 
 
