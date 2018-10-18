@@ -4,8 +4,14 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var http = require('http');
 var exphbs  = require('express-handlebars');
-
-
+var session = require('express-session');
+app.use(session({
+    secret: 'frontend',
+    proxy: true,
+    resave: true,
+    saveUninitialized: true
+}));
+var ssn;
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
@@ -35,24 +41,25 @@ app.get('/login', (req, res) => {
  })
 
 app.post('/login', (req, res)=> {
+    ssn = req.session;
     // Prepare output in JSON format
-    return new Promise(resolve => {
+    var promise= new Promise(resolve => {
       request.post('http://127.0.0.1:5000/login',
         { json: { "username": req.body.username,"password":req.body.password} },
         function (error, response, body) {
-          console.log('error:', error); // Print the error if one occurred
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           console.log('body:', body); // Print the HTML for the Google homepage.
           if(!error){
-            resolve(response.statusCode);
+            resolve([response.statusCode,body['api-key']]);
           } else{
             reject("failure");
           }
         })
-    }).then((statusCode)=>{
-      if (statusCode==400){
-        res.redirect(req.originalUrl)
+    }).then((response)=>{
+      if (response[0]==400){
+        res.redirect(req.originalUrl);
       }
+      ssn.token=response[1];
       res.redirect('prediction');
     })
     ;
@@ -60,30 +67,41 @@ app.post('/login', (req, res)=> {
  })
 
 app.get('/prediction', (req, res) => {
-    res.render('prediction')
+
+    res.render('prediction');
  })
 
 app.post('/prediction', (req, res)=> {
-   console.log(req.body.cast);
+  ssn = req.session;
+  console.log(ssn.token);
     // Prepare output in JSON format
-    request.post('http://127.0.0.1:5000/collections',
-    { json: { "indicator_id": req.body.cast} },
-    function (error, response, body) {
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      console.log('body:', body); // Print the HTML for the Google homepage.
-    });
-    res.redirect('result')
+  var promise= new Promise(resolve => {
+    request({
+      headers: {
+        'API-KEY': ssn.token
+      },
+      uri: 'http://127.0.0.1:5000/predict',
+      method: 'POST'
+    }, function (error, response, body) {
+        console.log('error:', error); // Print the error if one occurred
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        console.log('body:', body); // Print the HTML for the Google homepage.
+        ssn.result=body;
+        resolve('resolved');
+      })
+    }).then(()=>{
+    res.redirect('result');
+  }
+  );
+
+
  })
 
  app.get('/result', (req, res) => {
-   request.post('prediction',
-   function (error, response, body) {
-     console.log('error:', error); // Print the error if one occurred
-     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-     console.log('body:', body); // Print the HTML for the Google homepage.
-     res.render('result',{user:body})
-   });
+    ssn = req.session;
+    result=ssn.result;
+    console.log(result);
+    res.render('result',{revenue:result});
  })
 
 // Handle 404
