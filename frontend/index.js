@@ -3,8 +3,9 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request');
 var exphbs  = require('express-handlebars');
-
 var session = require('express-session');
+var flash = require('connect-flash')
+
 app.use(session({
     secret: 'frontend',
     proxy: true,
@@ -12,8 +13,6 @@ app.use(session({
     saveUninitialized: true
 }));
 var ssn;
-
-var flash = require('connect-flash')
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(session({
@@ -79,6 +78,7 @@ app.post('/login', (req, res)=> {
         res.redirect(req.originalUrl)
       }
       ssn.token=response[1];
+      console.log(`token is ${ssn.token}`)
       res.redirect('prediction');
     })
     ;
@@ -87,7 +87,11 @@ app.post('/login', (req, res)=> {
 
 app.get('/prediction', (req, res) => {
 
-    res.render('prediction');
+    if (ssn.token){
+      res.render('prediction');
+    }else{
+      res.status(400).render('400')
+    }
  })
 
 app.post('/prediction', (req, res)=> {
@@ -154,10 +158,18 @@ app.post('/prediction', (req, res)=> {
     res.render('result',{revenue:result});
  })
 
+ app.get('/logout', (req, res) => {
+  req.session.destroy((err)=>{
+    res.redirect('/')
+  })
+})
+
 // Handle 404
 app.use((req, res) =>{
   res.status(404).render('404')
 });
+
+
 
 
 var server = app.listen(8081, function () {
