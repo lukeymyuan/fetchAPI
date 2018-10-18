@@ -20,24 +20,13 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res)=> {
    // Prepare output in JSON format
-   response = {
-      email:req.body.email,
-      password:req.body.password,
-      confirm_password: req.body.cpassword
-   };
-   console.log(req.body.password)
    request.post('http://127.0.0.1:5000/signup',
-   { json: { "username": req.body.email,"password":req.body.password} },
+   { json: { "username": req.body.username,"password":req.body.password} },
    function (error, response, body) {
      console.log('error:', error); // Print the error if one occurred
      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
      console.log('body:', body); // Print the HTML for the Google homepage.
    });
-   console.log(statusCode);
-   if (statusCode==400){
-        res.redirect('/');
-   }
-   console.log(response);
    res.redirect('login')
 })
 
@@ -47,19 +36,27 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res)=> {
     // Prepare output in JSON format
-    response = {
-       email:req.body.email,
-       password:req.body.password
-    };
-    request.post('http://127.0.0.1:5000/login',
-    { json: { "username": req.body.email,"password":req.body.password} },
-    function (error, response, body) {
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      console.log('body:', body); // Print the HTML for the Google homepage.
-    });
-    console.log(response);
-    res.redirect('prediction')
+    return new Promise(resolve => {
+      request.post('http://127.0.0.1:5000/login',
+        { json: { "username": req.body.username,"password":req.body.password} },
+        function (error, response, body) {
+          console.log('error:', error); // Print the error if one occurred
+          console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+          console.log('body:', body); // Print the HTML for the Google homepage.
+          if(!error){
+            resolve(response.statusCode);
+          } else{
+            reject("failure");
+          }
+        })
+    }).then((statusCode)=>{
+      if (statusCode==400){
+        res.redirect(req.originalUrl)
+      }
+      res.redirect('prediction');
+    })
+    ;
+
  })
 
 app.get('/prediction', (req, res) => {
