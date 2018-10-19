@@ -9,17 +9,17 @@ import sqlite3
 filename = os.path.join("ml", "movies_v1.csv")
 DATABASE = "datahouse.db"
 
-conn = sqlite3.connect(DATABASE)
-pointer = conn.cursor()
 
 def printer(cursor):
-    cursor.execute('''SELECT * FROM Main''')
+    cursor.execute('''SELECT * FROM User''')
     user1 = cursor.fetchone()  # retrieve the first row
     print(user1)  # Print the first column retrieved(user's name)
 
-if __name__ == '__main__':
+def createDatabase():
+    conn = sqlite3.connect(DATABASE)
+    pointer = conn.cursor()
     df1 = pd.read_csv(filename)
-    createMovie = ''' CREATE TABLE IF NOT EXISTS Main(
+    createMovie = ''' CREATE TABLE Main(
                         movieID INTEGER PRIMARY KEY NOT NULL,
                         title TEXT,
                         budget INTEGER  NOT NULL,
@@ -35,7 +35,14 @@ if __name__ == '__main__':
                         posterPath TEXT
                         )
                     '''
+    UserTable = ''' CREATE TABLE User(
+                        email TEXT PRIMARY KEY NOT NULL,
+                        password TEXT
+                        )
+                    '''
     pointer.execute(createMovie)
+    pointer.execute(UserTable)
+    conn.commit()
     for index, row in df1.iterrows():
         insertValue = (index,row['title'],row['budget'],row['genres'],
                        row['original_language'],row['english'],
@@ -46,4 +53,5 @@ if __name__ == '__main__':
         pointer.execute('''INSERT INTO Main VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''', insertValue)
     conn.commit()
     printer(pointer)
+    print("Successfully created database")
     conn.close()

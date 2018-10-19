@@ -119,7 +119,7 @@ class Movies(Resource):
 @api.route('/signup')
 class SignUp(Resource):
     # signs up the user
-    @api.response(201, 'A new user successfuly signed up.')
+    @api.response(201, 'A new user successfully signed up.')
     @api.doc(description="Signs up the user so they can log in")
     @api.expect(login_model)
     def post(self):

@@ -1,14 +1,17 @@
 import sqlite3
 import re
+from makeDatabase import *
+import os
 #TODO fix so that if the file doesnt exist, to create the file
 file_name = "datahouse.db"
 posterPrefix = "https://image.tmdb.org/t/p/w342"
 
 class Database(object):
     def __init__(self):
+        self.initiate()
         self.conn = sqlite3.connect(file_name)
         self.pointer =self.conn.cursor()
-        self.initiate()
+
 
     def restartPointer(self):
         self.conn = sqlite3.connect(file_name)
@@ -19,15 +22,8 @@ class Database(object):
         self.conn.close()
 
     def initiate(self):
-        UserTable = ''' CREATE TABLE IF NOT EXISTS User(
-                            email TEXT PRIMARY KEY NOT NULL,
-                            password TEXT
-                            )
-                        '''
-
-        self.pointer.execute(UserTable)
-        self.save()
-
+        if not os.path.exists(file_name):
+            createDatabase()
 
     def enterUser(self,username,password):
         #Flask creates a new thread, therefore, need to recreate cursor object
