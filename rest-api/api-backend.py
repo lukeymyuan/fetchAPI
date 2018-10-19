@@ -108,12 +108,12 @@ class Movies(Resource):
             }
         '''
         movieList = db.findMovie(revenue)
-        return {'success' : True, 'movieList' : movieList},200
+        return {'success' : "Successfully found movies", 'movieList' : movieList},200
 
 @api.route('/signup')
 class SignUp(Resource):
     # signs up the user
-    @api.response(201, 'New user added to a db')
+    @api.response(201, 'A new user successfuly signed up.')
     @api.doc(description="Signs up the user so they can log in")
     @api.expect(login_model)
     def post(self):
@@ -124,7 +124,7 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return 201
+            return {"success" : "A new user successfuly signed up. "}, 201
         else:
             return {"error":result},400
 
