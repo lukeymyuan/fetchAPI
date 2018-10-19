@@ -46,6 +46,13 @@ authenticate_parser = reqparse.RequestParser()
 authenticate_parser.add_argument('username', type=str)
 authenticate_parser.add_argument('password', type=str)
 
+#Parser for a prediction
+predict_parser = reqparse.RequestParser()
+predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
+predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
+predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
+predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
+
 #Parser to show the movie
 movie_parser = reqparse.RequestParser()
 movie_parser.add_argument('revenue',type=int,required=True,help='Similar revenue')
@@ -74,13 +81,6 @@ def login_required(f):
 
 @api.route('/predict')
 class Revenue(Resource):
-
-    #Parser for a prediction
-    predict_parser = reqparse.RequestParser()
-    predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
-    predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
-    predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
-    predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
 
     #Uses machine learning to find the revenue of the movie
     @api.doc(description="Predicts the revenue of a movie based on its features")
