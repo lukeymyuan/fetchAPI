@@ -107,9 +107,9 @@ class Movies(Resource):
         if revenue <= 0:
             api.abort(400,"Revenue has to be greater than zero")
         '''
-            list of these movies in this format
+            list of 3 movies in this format
             {'movie': 'name},
-            {'revenue':5000},
+            {'revenue': 5000},
             {'poster': link},
         '''
         movieList = db.findMovie(revenue)
@@ -131,7 +131,7 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {"success" : "A new user successfuly signed up. "}, 201
+            return {"success" : "A new user successfuly signed up."}, 201
         else:
             return {"error":result},400
 
@@ -148,7 +148,7 @@ class Authenticate(Resource):
         if db.AuthenticateUser(username,password):
             return  {"api-key": encryptor.encrypt(username,password)}, 200
         else:
-            return {"error": "Either username doesn't exist or password is wrong"}, 400
+            return {"error": "Either username doesn't exist or password is wrong."}, 400
 
 
 if __name__ == '__main__':
