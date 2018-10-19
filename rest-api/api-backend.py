@@ -90,6 +90,11 @@ class Revenue(Resource):
     def post(self):
         args = predict_parser.parse_args()
         args['english'] = True if args['english'] == 'True' else False
+        cast = []
+        for i in range(1,6):
+            key = 'cast' + str(i)
+            if (args[key] != 'Option' and args[key] != ''):
+                cast.append(args[key])
         revenue = int(predict_revenue(args))
         return {'revenue':revenue}, 200
 
