@@ -1,6 +1,5 @@
 '''
-Uses pandas to remove the revenue and budget that is 0
-and to combine the dataset with directors
+
 '''
 
 import pandas as pd

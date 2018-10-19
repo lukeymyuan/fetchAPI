@@ -36,6 +36,10 @@ login_model = api.model('login', {
     'username': fields.String,
     'password': fields.String,
 })
+# Testing requirements
+input_model = api.model('input',{
+    'revenue': fields.Integer,
+})
 
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
@@ -51,7 +55,7 @@ predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in
 
 #Parser to show the movie
 movie_parser = reqparse.RequestParser()
-movie_parser.add.argument('revenue',type=int,required=True,help='Similar revenue')
+movie_parser.add_argument('revenue',type=int,required=True,help='Similar revenue')
 
 def login_required(f):
     @wraps(f)
@@ -95,20 +99,20 @@ class Movies(Resource):
     @api.response(200,'Successfully found movies')
     @login_required
     @api.doc(security='apikey')
+    @api.expect(input_model)
     def post(self):
         args = movie_parser.parse_args()
         revenue = args['revenue']
         if revenue <= 0:
             api.abort(400,"Revenue has to be greater than zero")
         '''
-            list of these movies
+            list of these movies in this format
             {'movie': 'name},
             {'revenue':5000},
             {'poster': link},
-            }
         '''
         movieList = db.findMovie(revenue)
-        return {'success':True, 'movieList': movieList},200
+        return {'message':"Sucessfully found movies with similar revenue", 'movieList': movieList},200
 
 
 
@@ -136,7 +140,7 @@ class Authenticate(Resource):
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
-    def get(self):
+    def post(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')

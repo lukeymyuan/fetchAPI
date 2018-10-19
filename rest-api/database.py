@@ -78,27 +78,6 @@ class Database(object):
              '''
         self.pointer.execute(command,(revenue,revenue,))
         result = self.pointer.fetchall()
-        print(result)
-        # command2 = '''
-        #             SELECT title,revenue,posterPath FROM
-        #             Main
-        #             WHERE
-        #             revenue < (?)
-        #             ORDER BY revenue
-        #             ASC LIMIT 3
-        #
-        #             '''
-        # self.pointer.execute(command2,(revenue,))
-        # result2 = self.pointer.fetchall()
-        # resultList=list()
-        # for i in result1:
-        #     resultList.append(list(i))
-        # for i in result2:
-        #     resultList.append(list(i))
-        # for movie in resultList:
-        #     percent = abs(revenue - movie[1])/revenue
-        #     movie.append(percent)
-        # sortedList = sorted(resultList, key=lambda x: x[3])
         movieList = list()
         for movie in result:
             movieElement = {
@@ -107,9 +86,6 @@ class Database(object):
                 'poster': posterPrefix+movie[2],
             }
             movieList.append(movieElement)
-
-        # print("Sorted list" + str(sortedList))
-        print("final list" + str(movieList))
         return movieList
 
 
