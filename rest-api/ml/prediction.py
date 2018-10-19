@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.externals import joblib
 
 FEATURES = ['budget', 'release_month', 'english', 'runtime']
+
 MODEL_PATH = 'model.pk1'
 
 model = joblib.load(MODEL_PATH)

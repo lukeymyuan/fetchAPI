@@ -36,6 +36,10 @@ login_model = api.model('login', {
     'username': fields.String,
     'password': fields.String,
 })
+# Testing requirements
+input_model = api.model('input',{
+    'revenue': fields.Integer,
+})
 
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
@@ -48,6 +52,10 @@ predict_parser.add_argument('budget', type=int, required=True, help='Budget in A
 predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
 predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
 predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
+
+#Parser to show the movie
+movie_parser = reqparse.RequestParser()
+movie_parser.add_argument('revenue',type=int,required=True,help='Similar revenue')
 
 def login_required(f):
     @wraps(f)
@@ -73,6 +81,7 @@ def login_required(f):
 
 @api.route('/predict')
 class Revenue(Resource):
+
     #Uses machine learning to find the revenue of the movie
     @api.doc(description="Predicts the revenue of a movie based on its features")
     @api.response(200, 'Successful')
@@ -84,10 +93,34 @@ class Revenue(Resource):
         revenue = int(predict_revenue(args))
         return {'revenue':revenue}, 200
 
+@api.route('/movies')
+class Movies(Resource):
+    #Returns a list of movies that are the most similar to the current revenue
+    @api.doc(description="Shows a list of movies that have the most similar revenue")
+    @api.response(200,'Successfully found movies')
+    @login_required
+    @api.doc(security='apikey')
+    @api.expect(input_model)
+    def get(self):
+        args = movie_parser.parse_args()
+        revenue = args['revenue']
+        if revenue <= 0:
+            api.abort(400,"Revenue has to be greater than zero")
+        '''
+            list of 3 movies in this format
+            {'movie': 'name},
+            {'revenue': 5000},
+            {'poster': link},
+        '''
+        movieList = db.findMovie(revenue)
+        return {'message':"Sucessfully found movies with similar revenue", 'movieList': movieList},200
+
+
+
 @api.route('/signup')
 class SignUp(Resource):
     # signs up the user
-    @api.response(201, 'New user added to a db')
+    @api.response(201, 'A new user successfully signed up.')
     @api.doc(description="Signs up the user so they can log in")
     @api.expect(login_model)
     def post(self):
@@ -98,24 +131,24 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {True:"Succesfully added into database"},201
+            return {"success" : "A new user successfuly signed up."}, 201
         else:
-            return {False:result},400
+            return {"error":result},400
 
 @api.route('/login')
 class Authenticate(Resource):
-    @api.response(200, 'Successful')
+    @api.response(200, 'Successful login')
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
-    def get(self):
+    def post(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"success": True, "api-key": encryptor.encrypt(username,password)},200
+            return  {"api-key": encryptor.encrypt(username,password)}, 200
         else:
-            return {"success" : False, "error": "Either username doesn't exist or password is wrong"},400
+            return {"error": "Either username doesn't exist or password is wrong."}, 400
 
 
 if __name__ == '__main__':
