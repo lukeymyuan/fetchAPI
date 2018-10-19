@@ -87,38 +87,38 @@ app.post('/login', (req, res)=> {
 
 app.get('/prediction', (req, res) => {
 
-    if (ssn.token){
+    // if (ssn.token){
       res.render('prediction');
-    }else{
-      res.status(400).render('400')
-    }
+    // }else{
+    //   res.status(400).render('400')
+    // }
  })
 
 app.post('/prediction', (req, res)=> {
 
 
-  let IsEnglish = false;
+  let isEnglish = 'false';
 
   if (req.body.english){
-    IsEnglish = true;
+    isEnglish = 'true';
   }
 
   console.log(req.body)
   ssn = req.session;
-  console.log(ssn.token);
     // Prepare output in JSON format
   var promise= new Promise(resolve => {
     request({
       headers: {
         'API-KEY': ssn.token
       },
-      uri: 'http://127.0.0.1:5000/predict',
+      uri: 'http://127.0.0.1:5000/predict?budget='+req.body.budget+'&release_month='+req.body.month+'&english='+isEnglish+'&runtime='+req.body.length,
       method: 'POST'
     }, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
-        ssn.result=body;
+        let revenueObj=JSON.parse(body);
+        ssn.result=revenueObj['revenue'];
         if(!error){
           resolve('resolved');
         }
@@ -126,8 +126,8 @@ app.post('/prediction', (req, res)=> {
       })
     }).then(()=>{
     res.redirect('result');
-  }
-  );
+
+  });
     // request.post('http://127.0.0.1:5000/prediction',{
     //   json: {
     //     "Budget": req.body.budget,
@@ -154,8 +154,19 @@ app.post('/prediction', (req, res)=> {
  app.get('/result', (req, res) => {
     ssn = req.session;
     result=ssn.result;
-    console.log(result);
-    res.render('result',{revenue:result});
+    var promise= new Promise(resolve => {
+      request.post('http://127.0.0.1:5000/movies',
+        { json: { "revenue":result} },
+        function (error, response, body) {
+          console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+          console.log('body:', body); // Print the HTML for the Google homepage.
+          resolve(body);
+      })
+    }).then((list)=>{
+      console.log(list);
+      res.render('result',{revenue:result,movie1:list['movieList'][0]['movie'],revenue1:list['movieList'][0]['revenue'],poster1:list['movieList'][0]['poster'],movie2:list['movieList'][1]['movie'],revenue2:list['movieList'][1]['revenue'],poster2:list['movieList'][1]['poster'],movie3:list['movieList'][2]['movie'],revenue3:list['movieList'][2]['revenue'],poster3:list['movieList'][2]['poster']});
+    })
+
  })
 
  app.get('/logout', (req, res) => {
