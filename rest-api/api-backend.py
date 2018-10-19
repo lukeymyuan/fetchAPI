@@ -108,9 +108,7 @@ class Movies(Resource):
             }
         '''
         movieList = db.findMovie(revenue)
-        return {'success':True, 'movieList': movieList},200
-
-
+        return {'success' : True, 'movieList' : movieList},200
 
 @api.route('/signup')
 class SignUp(Resource):
@@ -126,24 +124,24 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {True:"Succesfully added into database"},201
+            return 201
         else:
-            return {False:result},400
+            return {"error":result},400
 
 @api.route('/login')
 class Authenticate(Resource):
-    @api.response(200, 'Successful')
+    @api.response(200, 'Successful login')
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
-    def get(self):
+    def post(self):
         args = authenticate_parser.parse_args()
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"success": True, "api-key": encryptor.encrypt(username,password)},200
+            return  {"api-key": encryptor.encrypt(username,password)}, 200
         else:
-            return {"success" : False, "error": "Either username doesn't exist or password is wrong"},400
+            return {"error": "Either username doesn't exist or password is wrong"}, 400
 
 
 if __name__ == '__main__':
