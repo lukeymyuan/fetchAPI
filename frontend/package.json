@@ -18,6 +18,7 @@
   "homepage": "https://github.com/lukeymyuan/fetchAPI#readme",
   "dependencies": {
     "connect-flash": "^0.1.1",
+    "currency-formatter": "^1.5.3",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",

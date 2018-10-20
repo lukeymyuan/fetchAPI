@@ -2,6 +2,7 @@
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         {{>nav}}
           <h2 class="normal-heading">Prediction</h2>
+            {{>message}}
             <form action="prediction" method="POST">
               <div class="col mt-4">
                     <label class="input-label">Budget</label>
@@ -10,7 +11,7 @@
               <div class="row">
                   <div class="col mt-4">
                     <label class="input-label" style="margin-left:5%;">Cast1</label>                    
-                    <input name="cast1" type="text" class="input-field ml-auto" placeholder="Enter the Cast of the movie">
+                    <input name="cast1" type="text" class="input-field ml-auto" placeholder="Enter the Cast">
                   </div>
                   <div class="col mt-4">
                     <label class="input-label" style="margin-right:%;">Cast2</label>                    
@@ -33,7 +34,7 @@
               </div>                             
               <div class="col mt-4">
                 <label class="input-label" style="margin-right:5%;">Length</label>
-                <input name="length" type="text" min="0" max="200" class="input-field ml-auto" placeholder="Enter the length of the movie" required>
+                <input name="length" type="number" min="0" max="200" class="input-field ml-auto" placeholder="Enter the length of the movie" required>
               </div>
               <div class="col mt-4">
                 <label class="input-label" style="margin-right:2%;">Release Month</label>

@@ -5,6 +5,7 @@ var request = require('request');
 var exphbs  = require('express-handlebars');
 var session = require('express-session');
 var flash = require('connect-flash')
+var currencyFormatter = require("currency-formatter")
 
 app.use(session({
     secret: 'frontend',
@@ -23,17 +24,18 @@ app.use(session({
 app.use(flash())
 app.use(express.static('public'));
 app.use(urlencodedParser)
-
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.use((req,res,next)=>{
   res.locals.error_message = req.flash('error_message')
+  res.locals.user = req.user || null;
   next();
 })
 
 app.get('/', (req, res) => {
-   res.render('signup')
+   path = 'Signup'
+   res.render('signup',{path:path})
 })
 
 app.post('/', (req, res)=> {
@@ -53,7 +55,8 @@ app.post('/', (req, res)=> {
 })
 
 app.get('/login', (req, res) => {
-    res.render('login')
+    path = 'Login'
+    res.render('login',{path:path})
  })
 
 app.post('/login', (req, res)=> {
@@ -86,9 +89,9 @@ app.post('/login', (req, res)=> {
  })
 
 app.get('/prediction', (req, res) => {
-
+    path = 'Login'
     // if (ssn.token){
-      res.render('prediction');
+    res.render('prediction',{path:path});
     // }else{
     //   res.status(400).render('400')
     // }
@@ -117,6 +120,10 @@ app.post('/prediction', (req, res)=> {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
+        if(response.statusCode===401){
+          req.flash('error_message','No access since you are not logged in')
+          res.redirect(req.originalUrl)
+        }
         let revenueObj=JSON.parse(body);
         ssn.result=revenueObj['revenue'];
         if(!error){
@@ -161,10 +168,34 @@ app.post('/prediction', (req, res)=> {
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           console.log('body:', body); // Print the HTML for the Google homepage.
           resolve(body);
+          if(response.statusCode===401){
+            req.flash('error_message','No access since you are not logged in')
+            res.redirect('prediction')
+          }
       })
     }).then((list)=>{
       console.log(list);
-      res.render('result',{revenue:result,movie1:list['movieList'][0]['movie'],revenue1:list['movieList'][0]['revenue'],poster1:list['movieList'][0]['poster'],movie2:list['movieList'][1]['movie'],revenue2:list['movieList'][1]['revenue'],poster2:list['movieList'][1]['poster'],movie3:list['movieList'][2]['movie'],revenue3:list['movieList'][2]['revenue'],poster3:list['movieList'][2]['poster']});
+      //format the number as currency in USD
+      let revenue = currencyFormatter.format(result, { code: 'USD' });
+      let revenue1 = currencyFormatter.format(list['movieList'][0]['revenue'], { code: 'USD' });
+      let revenue2 = currencyFormatter.format(list['movieList'][1]['revenue'], { code: 'USD' });
+      let revenue3 = currencyFormatter.format(list['movieList'][2]['revenue'], { code: 'USD' });
+      path = 'Result'
+      res.render('result',{
+        revenue:revenue,
+        movie1:list['movieList'][0]['movie'],
+        revenue1:revenue1,
+        poster1:list['movieList'][0]['poster'],
+        movie2:list['movieList'][1]['movie'],
+        revenue2:revenue2,
+        poster2:list['movieList'][1]['poster'],
+        movie3:list['movieList'][2]['movie'],
+        revenue3:revenue3,
+        poster3:list['movieList'][2]['poster'],
+        path:path
+      });
+    }).catch(error=>{
+      console.log(error)
     })
 
  })
@@ -177,7 +208,8 @@ app.post('/prediction', (req, res)=> {
 
 // Handle 404
 app.use((req, res) =>{
-  res.status(404).render('404')
+  path = '404'
+  res.status(404).render('404',{path:path})
 });
 
 

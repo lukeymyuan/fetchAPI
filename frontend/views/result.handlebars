@@ -2,15 +2,18 @@
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     {{>nav}}
     <h2 class="normal-heading">Result</h2>
-      <div class="card text-center">
-        <div class="card-header display-4 bg-dark">
-        Venom
-        </div>
-      <div class="card-body" style="background-color:#005b96 ">
-        <p class="card-text">The Revenue will be ${{revenue}}</p>
-      </div>
-    </div>
-    <br>
+    <div class="card-group">
+      <div class="card" style="width: 18rem;">
+        <div class="card text-center">
+            <div class="card-header bg-dark">
+              Movie Paradise <i class="fas fa-robot"></i> think
+            </div>
+            <div class="card-body" style="background-color:#005b96 ">
+              <p class="card-text">The Revenue of the movie will be {{revenue}}</p>
+            </div>
+          </div>
+    </div>    
+  <div>
     <h2 class="normal-heading">Similar Movies</h2>
     <div class="card-group">
       <div class="card" style="width: 18rem;">
@@ -19,9 +22,9 @@
               {{movie1}}
             </div>
             <div class="card-body" style="background-color:#005b96 ">
-              <p class="card-text">The Revenue will be ${{revenue1}}</p>
+              <p class="card-text">The Revenue was {{revenue1}}</p>
             </div>
-            <img src="{{poster1}}">
+            <img height="200px" class="img-responsive" src="{{poster1}}">
           </div>
         </div>
         <div class="card" style="width: 18rem;">
@@ -30,9 +33,9 @@
                   {{movie2}}
                 </div>
                 <div class="card-body" style="background-color:#005b96 ">
-                  <p class="card-text">The Revenue is ${{revenue2}}</p>
+                  <p class="card-text">The Revenue was {{revenue2}}</p>
                 </div>
-                <img src="{{poster2}}">
+                <img height="200px" class="img-responsive" src="{{poster2}}">
               </div>
             </div>
 
@@ -42,11 +45,12 @@
                   {{movie3}}
                 </div>
                 <div class="card-body" style="background-color:#005b96 ">
-                  <p class="card-text">The Revenue is ${{revenue3}}</p>
+                  <p class="card-text">The Revenue was {{revenue3}}</p>
                 </div>
-                <img src="{{poster3}}">
+                <img height="200px" class="img-responsive" src="{{poster3}}">
               </div>
             </div>
+          </div>
       </div>
       {{>footer}}
   </div>
