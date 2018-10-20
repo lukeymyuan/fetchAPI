@@ -91,11 +91,11 @@ app.post('/login', (req, res)=> {
 app.get('/prediction', (req, res) => {
     ssn = req.session
     path = 'Prediction'
-    if (ssn.token){
+    // if (ssn.token){
     res.render('prediction',{path:path});
-    }else{
-      res.status(400).render('400')
-    }
+    // }else{
+    //   res.status(400).render('400')
+    // }
  })
 
 app.post('/prediction', (req, res)=> {
@@ -115,8 +115,9 @@ app.post('/prediction', (req, res)=> {
       headers: {
         'API-KEY': ssn.token
       },
-      uri: 'http://127.0.0.1:5000/predict?budget='+req.body.budget+'&release_month='+req.body.month+'&english='+isEnglish+'&runtime='+req.body.length,
-      method: 'POST'
+      uri: 'http://127.0.0.1:5000/predict',
+      method: 'POST',
+      json: { "director":req.body.director,"budget":req.body.budget,"english":isEnglish,"runtime":req.body.length,"release_month":req.body.month,"cast1":req.body.cast1,"cast2":req.body.cast2,"cast3":req.body.cast3,"cast4":req.body.cast4,"cast5":req.body.cast5}
     }, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
@@ -125,8 +126,7 @@ app.post('/prediction', (req, res)=> {
           req.flash('error_message','No access since you are not logged in')
           res.redirect(req.originalUrl)
         }
-        let revenueObj=JSON.parse(body);
-        ssn.result=revenueObj['revenue'];
+        ssn.result=body['revenue'];
         if(!error){
           resolve('resolved');
         }
@@ -136,26 +136,6 @@ app.post('/prediction', (req, res)=> {
     res.redirect('result');
 
   });
-    // request.post('http://127.0.0.1:5000/prediction',{
-    //   json: {
-    //     "Budget": req.body.budget,
-    //     "Cast1": req.body.cast1,
-    //     "Cast2": req.body.cast2,
-    //     "Cast3": req.body.cast3,
-    //     "Cast4": req.body.cast4,
-    //     "Cast5": req.body.cast5,
-    //     "Length": req.body.length,
-    //     "Month": req.body.month,
-    //     "IsEnglish": IsEnglish,
-    //     }
-    //   },
-    //   function (error, response, body) {
-    //     console.log('error:', error); // Print the error if one occurred
-    //     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    //     console.log('body:', body); // Print the HTML for the Google homepage.
-
-    // });
-    // res.redirect('result')
 
  })
 
@@ -166,9 +146,9 @@ app.post('/prediction', (req, res)=> {
       request({
         headers: {
           'API-KEY': ssn.token
-        },        
-        uri:'http://127.0.0.1:5000/movies',
-        method:'GET',        
+        },
+        uri:'http://127.0.0.1:5000/movies/'+result,
+        method:'GET',
         json: { "revenue":result} },
         function (error, response, body) {
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
