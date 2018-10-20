@@ -1,24 +1,26 @@
 # fetchAPI
-For the frontend:
-1. Download Nodejs from https://nodejs.org/en/download/
-2. install all packages for enviroment `npm i`
-3. Execute `node index.js`
-(Option) install nodemon to monitor the changes in client `nodemon index.js` or `nodemon . `
-If it shows `nodemon: not found`, then `sudo npm install -g nodemon`
 
+## Summary
+A ML webapp that predicts the revenue(box office) based on the features of the movie and shows similar movies
 
+## Getting Started
+### Frontend
+```sh
+npm install
+node index.js
+```
+Frontend should now be running on <http://127.0.0.1:8081>
 
-For the backend:
-    - API is initiated by running the 'api-backend.py' file
-   
-  Prerequisites:
-  Install pipenv: https://github.com/pypa/pipenv
+### Backend:
+Prerequisites:
+Install pipenv: https://github.com/pypa/pipenv
 
-## instructions
 1. Run command to set up modules: `pipenv install`
 2. Launch the pipenv shell: `pipenv shell`
 2. Train the prediction model: `python ml/train.py ml/movies_v1.csv`
 3. Start the API using command: `python api-backend.py`
+
+Backend should now be running on <http://127.0.0.1:5000>
 
 ## Integrating Machine learning (for backend)
 ```python
