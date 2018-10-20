@@ -1,13 +1,14 @@
 import numpy as np
+import os
 import pandas as pd
 from sklearn.externals import joblib
+from ml.cast_crew import get_director_revenue, get_actor_list_revenue
 
 FEATURES = ['budget', 'release_month', 'english', 'runtime']
-
+GENERATED = ['director_revenue', 'actor_revenue']
 MODEL_PATH = 'model.pk1'
 
 model = joblib.load(MODEL_PATH)
-
 
 def encode_month(month):
     '''Get one-hot encoding for month value'''
@@ -16,10 +17,15 @@ def encode_month(month):
     months['month_{}'.format(month)][0] = 1
     return months    
 
-
 def predict_revenue(movie: dict):
     '''Predict the revenue of a movie given its features'''
-    movie_df = pd.DataFrame([movie], columns=FEATURES)
+    data = dict(movie)
+    director = data.pop('director', 'Other_')
+    actors = data.pop('actors', [])
+    actors_str = '#'.join([a.replace('#', '') for a in actors])
+    data['director_revenue'] = get_director_revenue(director)
+    data['actor_revenue'] = get_actor_list_revenue(actors_str)
+    movie_df = pd.DataFrame([data], columns=GENERATED + FEATURES)
     if movie_df.isnull().values.any():
         raise Exception('Missing fields: movie info should have {}'.format(FEATURES))
 
@@ -27,17 +33,18 @@ def predict_revenue(movie: dict):
     movie_df = movie_df.drop(columns=['release_month'])
     movie_df = pd.concat([movie_df, month_encoding], axis=1)
 
-    # print(movie_df)
-
     pred = model.predict(movie_df)
     return pred[0]
 
 if __name__ == '__main__':
     # test predict
     r = predict_revenue({
-        'budget': 600000000,
-        'release_month': 12,
+        'director': 'Edgar Wright',
+        'actors': ['Ansel Elgort', 'Lily James', 'Kevin Spacey', 'Jamie Foxx',
+            'Jon Hamm'],
+        'budget': 34000000,
+        'release_month': 6,
         'english': True,
-        'runtime': 180
+        'runtime': 113
     })
     print(r)

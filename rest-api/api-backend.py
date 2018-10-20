@@ -41,6 +41,23 @@ input_model = api.model('input',{
     'revenue': fields.Integer,
 })
 
+#Movie features
+features_model = api.model('features',{
+    'director': fields.String,
+    'budget': fields.Integer,
+    'english':fields.String,
+    'runtime': fields.Integer,
+    'release_month': fields.String,
+    'cast1': fields.String,
+    'cast2': fields.String,
+    'cast3': fields.String,
+    'cast4': fields.String,
+    'cast5': fields.String,
+
+})
+
+
+
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
 authenticate_parser.add_argument('username', type=str)
@@ -48,10 +65,16 @@ authenticate_parser.add_argument('password', type=str)
 
 #Parser for a prediction
 predict_parser = reqparse.RequestParser()
+predict_parser.add_argument('director', type=str, required=True, help='Full name of a director')
 predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
 predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
 predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
 predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
+predict_parser.add_argument('cast1', type=str, help='Cast member 1')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2')
+predict_parser.add_argument('cast3', type=str, help='Cast member 3')
+predict_parser.add_argument('cast4', type=str, help='Cast member 4')
+predict_parser.add_argument('cast5', type=str, help='Cast member 5')
 
 #Parser to show the movie
 movie_parser = reqparse.RequestParser()
@@ -81,31 +104,47 @@ def login_required(f):
 
 @api.route('/predict')
 class Revenue(Resource):
-
     #Uses machine learning to find the revenue of the movie
     @api.doc(description="Predicts the revenue of a movie based on its features")
-    @api.response(200, 'Successful')
+    @api.response(200, 'Successful determined the revenue')
+    @api.response(400, 'One or more of the input parameters is invalid')
     @login_required
     @api.doc(security='apikey')
+    @api.expect(features_model)
     def post(self):
         args = predict_parser.parse_args()
         args['english'] = True if args['english'] == 'True' else False
-        revenue = int(predict_revenue(args))
-        return {'revenue':revenue}, 200
+        cast = []
+        if args.get('budget') < 0:
+            api.abort(400,'Budget has to be greater or equal to 0')
+        elif args.get('release_month') < 1 or args.get('release_month') > 12:
+            api.abort(400,"Month is not valid, it has to be between 1 - 12")
+        elif args.get('runtime') < 0:
+            api.abort(400,"Runtime cannot be less than 0")
+        print(args)
+        for i in range(1,6):
+            key = 'cast' + str(i)
+            if args.get(key) is not None and args[key] != 'Option' and args[key] != '':
+                    cast.append(args[key])
+            args.pop(key, None)
 
-@api.route('/movies')
+        if cast is not None:
+            args['actors'] = cast
+        print(args)
+        revenue = int(predict_revenue(args))
+        return {'message':'Successfully determined the revenue based on features', 'revenue':revenue}, 200
+
+@api.route('/movies/<int:revenue>')
 class Movies(Resource):
     #Returns a list of movies that are the most similar to the current revenue
     @api.doc(description="Shows a list of movies that have the most similar revenue")
     @api.response(200,'Successfully found movies')
+    @api.response(400, 'Invalid input - Revenue greater than zero')
     @login_required
     @api.doc(security='apikey')
-    @api.expect(input_model)
-    def get(self):
-        args = movie_parser.parse_args()
-        revenue = args['revenue']
+    def get(self,revenue):
         if revenue <= 0:
-            api.abort(400,"Revenue has to be greater than zero")
+            api.abort(400,'Revenue has to be greater than zero')
         '''
             list of 3 movies in this format
             {'movie': 'name},
@@ -131,9 +170,8 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {"success" : "A new user successfuly signed up."}, 201
-        else:
-            return {"error":result},400
+            return {"message":"A new user successfully signed up."}, 201
+        api.abort(400,result)
 
 @api.route('/login')
 class Authenticate(Resource):
@@ -146,10 +184,8 @@ class Authenticate(Resource):
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"api-key": encryptor.encrypt(username,password)}, 200
-        else:
-            return {"error": "Either username doesn't exist or password is wrong."}, 400
-
+            return  {"message":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 200
+        api.abort(400,"Either username doesn't exist or password is wrong.")
 
 if __name__ == '__main__':
     app.run(debug=True)
