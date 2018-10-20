@@ -89,12 +89,13 @@ app.post('/login', (req, res)=> {
  })
 
 app.get('/prediction', (req, res) => {
-    path = 'Login'
-    // if (ssn.token){
+    ssn = req.session
+    path = 'Prediction'
+    if (ssn.token){
     res.render('prediction',{path:path});
-    // }else{
-    //   res.status(400).render('400')
-    // }
+    }else{
+      res.status(400).render('400')
+    }
  })
 
 app.post('/prediction', (req, res)=> {
@@ -162,8 +163,13 @@ app.post('/prediction', (req, res)=> {
     ssn = req.session;
     result=ssn.result;
     var promise= new Promise(resolve => {
-      request.post('http://127.0.0.1:5000/movies',
-        { json: { "revenue":result} },
+      request({
+        headers: {
+          'API-KEY': ssn.token
+        },        
+        uri:'http://127.0.0.1:5000/movies',
+        method:'GET',        
+        json: { "revenue":result} },
         function (error, response, body) {
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           console.log('body:', body); // Print the HTML for the Google homepage.
