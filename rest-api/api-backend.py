@@ -139,12 +139,12 @@ class Movies(Resource):
     #Returns a list of movies that are the most similar to the current revenue
     @api.doc(description="Shows a list of movies that have the most similar revenue")
     @api.response(200,'Successfully found movies')
-    @api.response(400, 'Revenue has to be greater than zero')
+    @api.response(400, 'Invalid input - Revenue greater than zero')
     @login_required
     @api.doc(security='apikey')
     def get(self,revenue):
         if revenue <= 0:
-            api.abort(400)
+            api.abort(400,'Revenue has to be greater than zero')
         '''
             list of 3 movies in this format
             {'movie': 'name},
