@@ -1,7 +1,8 @@
 '''Trains the revenue prediction model from the movies dataset'''
 import sys
 import pandas as pd
-from sklearn import linear_model
+# from sklearn import linear_model
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.externals import joblib
 from cast_crew import get_director_revenue, get_actor_list_revenue
 
@@ -20,7 +21,7 @@ def extract_features(df):
     '''Extract independent variables for training'''
     # Aggregate revenue grouped by actors
     df['director_revenue'] = df['director'].apply(get_director_revenue)
-    df['actor_revenue'] = df['actors'].apply(get_actor_list_revenue)
+    # df['actor_revenue'] = df['actors'].apply(get_actor_list_revenue)
 
     df = df[GENERATED + FEATURES]
     month_encoding = encode_month(df['release_month'])
@@ -37,7 +38,7 @@ if __name__ == '__main__':
 
     # print(X.head())
 
-    model = linear_model.LinearRegression()
+    model = RandomForestRegressor(max_depth=7)
     model.fit(X, y)
 
     joblib.dump(model, MODEL_PATH)
