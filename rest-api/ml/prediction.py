@@ -9,14 +9,12 @@ MODEL_PATH = 'model.pk1'
 
 model = joblib.load(MODEL_PATH)
 
-
 def encode_month(month):
     '''Get one-hot encoding for month value'''
     months = pd.DataFrame(columns=['month_{}'.format(i) for i in range(1,12+1)])
     months.loc[0] = 0
     months['month_{}'.format(month)][0] = 1
     return months    
-
 
 def predict_revenue(movie: dict):
     '''Predict the revenue of a movie given its features'''

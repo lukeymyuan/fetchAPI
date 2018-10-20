@@ -48,10 +48,16 @@ authenticate_parser.add_argument('password', type=str)
 
 #Parser for a prediction
 predict_parser = reqparse.RequestParser()
+predict_parser.add_argument('director', type=str, required=True, help='Full name of a director')
 predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
 predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
 predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
-predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
+predict_parser.add_argument('runtime', relsquired=True, type=int, help='Runtime in minutes')
+predict_parser.add_argument('cast1', type=str, help='Cast member 1')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2')
 
 #Parser to show the movie
 movie_parser = reqparse.RequestParser()
@@ -84,7 +90,7 @@ class Revenue(Resource):
 
     #Uses machine learning to find the revenue of the movie
     @api.doc(description="Predicts the revenue of a movie based on its features")
-    @api.response(200, 'Successful')
+    @api.response(201, 'Successful computation of a predictoin.')
     @login_required
     @api.doc(security='apikey')
     def post(self):
@@ -93,10 +99,13 @@ class Revenue(Resource):
         cast = []
         for i in range(1,6):
             key = 'cast' + str(i)
-            if (args[key] != 'Option' and args[key] != ''):
-                cast.append(args[key])
+            if key in args:
+                if (args[key] != 'Option' and args[key] != ''):
+                    cast.append(args[key])
+                args.pop(key, None)
+        args['actors'] = cast
         revenue = int(predict_revenue(args))
-        return {'revenue':revenue}, 200
+        return {'success':'Succesful computation of a predicton with given inputs', 'revenue':revenue}, 201
 
 @api.route('/movies')
 class Movies(Resource):
@@ -136,7 +145,7 @@ class SignUp(Resource):
         result = db.enterUser(username,password)
         #Succesfully added into the database and if no errors
         if not result:
-            return {"success" : "A new user successfuly signed up."}, 201
+            return {"success":"A new user successfuly signed up."}, 201
         else:
             return {"error":result},400
 
@@ -151,9 +160,9 @@ class Authenticate(Resource):
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"api-key": encryptor.encrypt(username,password)}, 200
+            return  {"success":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 200
         else:
-            return {"error": "Either username doesn't exist or password is wrong."}, 400
+            return {"error":"Either username doesn't exist or password is wrong."}, 400
 
 
 if __name__ == '__main__':
