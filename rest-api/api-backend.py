@@ -62,7 +62,7 @@ authenticate_parser.add_argument('password', type=str, location='json')
 
 #Parser for a prediction
 predict_parser = reqparse.RequestParser()
-predict_parser.add_argument('director', type=str, required=True, help='Full name of a director', location='json')
+predict_parser.add_argument('director', type=str, help='Full name of a director', location='json')
 predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD', location='json')  
 predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)', location='json')
 predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False', location='json')
