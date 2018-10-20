@@ -53,7 +53,6 @@ features_model = api.model('features',{
     'cast3': fields.String,
     'cast4': fields.String,
     'cast5': fields.String,
-
 })
 
 
@@ -121,15 +120,15 @@ class Revenue(Resource):
             api.abort(400,"Month is not valid, it has to be between 1 - 12")
         elif args.get('runtime') <= 0:
             api.abort(400,"Runtime has to be larger than 0")
-        print(args)
+        # print(args)
         for i in range(1,6):
             key = 'cast' + str(i)
             if args.get(key) is not None and args[key] != 'Option' and args[key] != '':
                 cast.append(args[key])
             args.pop(key, None)
         args['actors'] = cast
-        print(args)
         revenue = int(predict_revenue(args))
+        print(args)
         return {'message':'Successfully determined the revenue based on features', 'revenue':revenue}, 200
 
 @api.route('/movies/<int:revenue>')
