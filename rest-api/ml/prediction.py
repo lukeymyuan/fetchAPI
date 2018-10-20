@@ -38,6 +38,14 @@ def predict_revenue(movie: dict):
 
 if __name__ == '__main__':
     # test predict
+    print(predict_revenue({
+        'director': '',
+        'actors': ['', '', '', '', ''],
+        'release_month': 5,
+        'budget': 1000000,
+        'english': True,
+        'runtime': 45
+    }))
     r = predict_revenue({
         'director': 'Edgar Wright',
         'actors': ['Ansel Elgort', 'Lily James', 'Kevin Spacey', 'Jamie Foxx',

@@ -47,7 +47,7 @@ features_model = api.model('features',{
     'budget': fields.Integer,
     'english':fields.String,
     'runtime': fields.Integer,
-    'release_month': fields.String,
+    'release_month': fields.Integer,
     'cast1': fields.String,
     'cast2': fields.String,
     'cast3': fields.String,
