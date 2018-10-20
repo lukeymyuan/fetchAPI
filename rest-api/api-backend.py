@@ -55,8 +55,6 @@ features_model = api.model('features',{
     'cast5': fields.String,
 })
 
-
-
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
 authenticate_parser.add_argument('username', type=str, location='json')
@@ -74,10 +72,6 @@ predict_parser.add_argument('cast2', type=str, help='Cast member 2', location='j
 predict_parser.add_argument('cast3', type=str, help='Cast member 3', location='json')
 predict_parser.add_argument('cast4', type=str, help='Cast member 4', location='json')
 predict_parser.add_argument('cast5', type=str, help='Cast member 5', location='json')
-
-#Parser to show the movie
-movie_parser = reqparse.RequestParser()
-movie_parser.add_argument('revenue',type=int,required=True,help='Similar revenue')
 
 def login_required(f):
     @wraps(f)
