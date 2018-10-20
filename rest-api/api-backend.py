@@ -53,32 +53,25 @@ features_model = api.model('features',{
     'cast3': fields.String,
     'cast4': fields.String,
     'cast5': fields.String,
-
 })
-
-
 
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
-authenticate_parser.add_argument('username', type=str)
-authenticate_parser.add_argument('password', type=str)
+authenticate_parser.add_argument('username', type=str, location='json')
+authenticate_parser.add_argument('password', type=str, location='json')
 
 #Parser for a prediction
 predict_parser = reqparse.RequestParser()
-predict_parser.add_argument('director', type=str, required=True, help='Full name of a director')
-predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
-predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
-predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
-predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
-predict_parser.add_argument('cast1', type=str, help='Cast member 1')
-predict_parser.add_argument('cast2', type=str, help='Cast member 2')
-predict_parser.add_argument('cast3', type=str, help='Cast member 3')
-predict_parser.add_argument('cast4', type=str, help='Cast member 4')
-predict_parser.add_argument('cast5', type=str, help='Cast member 5')
-
-#Parser to show the movie
-movie_parser = reqparse.RequestParser()
-movie_parser.add_argument('revenue',type=int,required=True,help='Similar revenue')
+predict_parser.add_argument('director', type=str, help='Full name of a director', location='json')
+predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD', location='json')  
+predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)', location='json')
+predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False', location='json')
+predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes', location='json')
+predict_parser.add_argument('cast1', type=str, help='Cast member 1', location='json')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2', location='json')
+predict_parser.add_argument('cast3', type=str, help='Cast member 3', location='json')
+predict_parser.add_argument('cast4', type=str, help='Cast member 4', location='json')
+predict_parser.add_argument('cast5', type=str, help='Cast member 5', location='json')
 
 def login_required(f):
     @wraps(f)
@@ -119,18 +112,14 @@ class Revenue(Resource):
             api.abort(400,'Budget has to be greater or equal to 0')
         elif args.get('release_month') < 1 or args.get('release_month') > 12:
             api.abort(400,"Month is not valid, it has to be between 1 - 12")
-        elif args.get('runtime') < 0:
-            api.abort(400,"Runtime cannot be less than 0")
-        print(args)
+        elif args.get('runtime') <= 0:
+            api.abort(400,"Runtime has to be larger than 0")
         for i in range(1,6):
             key = 'cast' + str(i)
             if args.get(key) is not None and args[key] != 'Option' and args[key] != '':
-                    cast.append(args[key])
+                cast.append(args[key])
             args.pop(key, None)
-
-        if cast is not None:
-            args['actors'] = cast
-        print(args)
+        args['actors'] = cast
         revenue = int(predict_revenue(args))
         return {'message':'Successfully determined the revenue based on features', 'revenue':revenue}, 200
 
@@ -175,7 +164,7 @@ class SignUp(Resource):
 
 @api.route('/login')
 class Authenticate(Resource):
-    @api.response(200, 'Successful login')
+    @api.response(201, 'Successful login')
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
@@ -184,7 +173,7 @@ class Authenticate(Resource):
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"message":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 200
+            return  {"message":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 201
         api.abort(400,"Either username doesn't exist or password is wrong.")
 
 if __name__ == '__main__':
