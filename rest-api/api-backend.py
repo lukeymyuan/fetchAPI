@@ -59,21 +59,21 @@ features_model = api.model('features',{
 
 #Parsers for username and password
 authenticate_parser = reqparse.RequestParser()
-authenticate_parser.add_argument('username', type=str)
-authenticate_parser.add_argument('password', type=str)
+authenticate_parser.add_argument('username', type=str, location='json')
+authenticate_parser.add_argument('password', type=str, location='json')
 
 #Parser for a prediction
 predict_parser = reqparse.RequestParser()
-predict_parser.add_argument('director', type=str, required=True, help='Full name of a director')
-predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD')  
-predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)')
-predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False')
-predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes')
-predict_parser.add_argument('cast1', type=str, help='Cast member 1')
-predict_parser.add_argument('cast2', type=str, help='Cast member 2')
-predict_parser.add_argument('cast3', type=str, help='Cast member 3')
-predict_parser.add_argument('cast4', type=str, help='Cast member 4')
-predict_parser.add_argument('cast5', type=str, help='Cast member 5')
+predict_parser.add_argument('director', type=str, required=True, help='Full name of a director', location='json')
+predict_parser.add_argument('budget', type=int, required=True, help='Budget in AUD', location='json')  
+predict_parser.add_argument('release_month', type=int, required=True, help='Release month (1-12)', location='json')
+predict_parser.add_argument('english', type=str, required=True, help='Is the movie in English? True / False', location='json')
+predict_parser.add_argument('runtime', required=True, type=int, help='Runtime in minutes', location='json')
+predict_parser.add_argument('cast1', type=str, help='Cast member 1', location='json')
+predict_parser.add_argument('cast2', type=str, help='Cast member 2', location='json')
+predict_parser.add_argument('cast3', type=str, help='Cast member 3', location='json')
+predict_parser.add_argument('cast4', type=str, help='Cast member 4', location='json')
+predict_parser.add_argument('cast5', type=str, help='Cast member 5', location='json')
 
 #Parser to show the movie
 movie_parser = reqparse.RequestParser()
@@ -120,7 +120,6 @@ class Revenue(Resource):
             api.abort(400,"Month is not valid, it has to be between 1 - 12")
         elif args.get('runtime') <= 0:
             api.abort(400,"Runtime has to be larger than 0")
-        # print(args)
         for i in range(1,6):
             key = 'cast' + str(i)
             if args.get(key) is not None and args[key] != 'Option' and args[key] != '':
@@ -128,7 +127,6 @@ class Revenue(Resource):
             args.pop(key, None)
         args['actors'] = cast
         revenue = int(predict_revenue(args))
-        print(args)
         return {'message':'Successfully determined the revenue based on features', 'revenue':revenue}, 200
 
 @api.route('/movies/<int:revenue>')
