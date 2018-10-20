@@ -119,17 +119,15 @@ class Revenue(Resource):
             api.abort(400,'Budget has to be greater or equal to 0')
         elif args.get('release_month') < 1 or args.get('release_month') > 12:
             api.abort(400,"Month is not valid, it has to be between 1 - 12")
-        elif args.get('runtime') < 0:
-            api.abort(400,"Runtime cannot be less than 0")
+        elif args.get('runtime') <= 0:
+            api.abort(400,"Runtime has to be larger than 0")
         print(args)
         for i in range(1,6):
             key = 'cast' + str(i)
             if args.get(key) is not None and args[key] != 'Option' and args[key] != '':
-                    cast.append(args[key])
+                cast.append(args[key])
             args.pop(key, None)
-
-        if cast is not None:
-            args['actors'] = cast
+        args['actors'] = cast
         print(args)
         revenue = int(predict_revenue(args))
         return {'message':'Successfully determined the revenue based on features', 'revenue':revenue}, 200
@@ -175,7 +173,7 @@ class SignUp(Resource):
 
 @api.route('/login')
 class Authenticate(Resource):
-    @api.response(200, 'Successful login')
+    @api.response(201, 'Successful login')
     @api.response(400, 'Incorrect login details')
     @api.doc(description="Login form for users")
     @api.expect(login_model)
@@ -184,7 +182,7 @@ class Authenticate(Resource):
         username = args.get('username')
         password = args.get('password')
         if db.AuthenticateUser(username,password):
-            return  {"message":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 200
+            return  {"message":"Successful login.", "api-key":encryptor.encrypt(username,password)}, 201
         api.abort(400,"Either username doesn't exist or password is wrong.")
 
 if __name__ == '__main__':
