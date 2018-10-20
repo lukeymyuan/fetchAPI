@@ -1,7 +1,8 @@
 import numpy as np
+import os
 import pandas as pd
 from sklearn.externals import joblib
-from cast_crew import get_director_revenue, get_actor_list_revenue
+from ml.cast_crew import get_director_revenue, get_actor_list_revenue
 
 FEATURES = ['budget', 'release_month', 'english', 'runtime']
 GENERATED = ['director_revenue', 'actor_revenue']

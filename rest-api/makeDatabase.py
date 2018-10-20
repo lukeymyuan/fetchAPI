@@ -1,5 +1,5 @@
 '''
-
+creates the movie and user database
 '''
 
 import pandas as pd
