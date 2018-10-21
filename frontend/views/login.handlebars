@@ -2,7 +2,7 @@
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     {{>nav}}
     <h2 class="normal-heading">Login in</h2>
-        {{>message}} 
+        {{>message}}
       <a class="redirectlink noborder"href="/" style="text-align:right">Click Here to Sign up</a>
         <form action="login" method="POST">
           <div class="form-group">
@@ -13,11 +13,7 @@
             <label>Password</label>
             <input name="password" type="password" class="form-control"placeholder="Password" required>
           </div>
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Remeber Me</label>
-          </div>
-          <button type="submit" class="btn btn-success">Login</button>           
+          <button type="submit" class="btn btn-success">Login</button>
         </form>
     {{>footer}}
   </div>

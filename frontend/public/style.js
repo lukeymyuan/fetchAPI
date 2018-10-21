@@ -1,7 +1,7 @@
 var check = function() {
-    if(document.getElementById('Password1').value.length<7){
+    if(document.getElementById('Password1').value.length<6){
         document.getElementById('Help').className="form-text text-danger"
-        document.getElementById('Help').innerHTML = 'Password length is too short, needs to be more than 6 characters';
+        document.getElementById('Help').innerHTML = 'Password length is too short, needs to be at least 6 characters';
         document.getElementById('submit').disabled=true;
     }
     else{

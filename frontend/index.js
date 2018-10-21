@@ -40,18 +40,28 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res)=> {
    // Prepare output in JSON format
-   request.post('http://127.0.0.1:5000/signup',{
-     json: {
-     "username": req.body.username,
-     "password":req.body.password
-      }
-    },
-   function (error, response, body) {
-     console.log('error:', error); // Print the error if one occurred
-     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-     console.log('body:', body); // Print the HTML for the Google homepage.
-   });
-   res.redirect('login')
+   var promise= new Promise(resolve => {
+     request.post('http://127.0.0.1:5000/signup',{
+       json: {
+       "username": req.body.username,
+       "password":req.body.password
+        }
+      },
+     function (error, response, body) {
+       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+       console.log('body:', body); // Print the HTML for the Google homepage.
+       if(!error){
+         resolve(response.statusCode);
+       }
+     })
+     }).then((statusCode)=>{
+       if (statusCode==400){
+         req.flash('error_message','Username already exists')
+         res.redirect(req.originalUrl)
+       }
+       res.redirect('login')
+     });
+
 })
 
 app.get('/login', (req, res) => {
@@ -64,7 +74,7 @@ app.post('/login', (req, res)=> {
     // Prepare output in JSON format
     var promise= new Promise(resolve => {
       request.post('http://127.0.0.1:5000/login',
-        { json: { 
+        { json: {
           "username": req.body.username,
           "password":req.body.password
           }
@@ -120,7 +130,7 @@ app.post('/prediction', (req, res)=> {
       },
       uri: 'http://127.0.0.1:5000/predict',
       method: 'POST',
-      json: { 
+      json: {
         "director":req.body.director,
         "budget":req.body.budget,
         "english":isEnglish,
