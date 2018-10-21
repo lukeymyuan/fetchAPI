@@ -5,6 +5,7 @@ var request = require('request');
 var exphbs  = require('express-handlebars');
 var session = require('express-session');
 var flash = require('connect-flash')
+var currencyFormatter = require("currency-formatter")
 
 app.use(session({
     secret: 'frontend',
@@ -23,17 +24,18 @@ app.use(session({
 app.use(flash())
 app.use(express.static('public'));
 app.use(urlencodedParser)
-
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 app.use((req,res,next)=>{
   res.locals.error_message = req.flash('error_message')
+  res.locals.user = req.user || null;
   next();
 })
 
 app.get('/', (req, res) => {
-   res.render('signup')
+   path = 'Signup'
+   res.render('signup',{path:path})
 })
 
 app.post('/', (req, res)=> {
@@ -42,7 +44,7 @@ app.post('/', (req, res)=> {
      json: {
      "username": req.body.username,
      "password":req.body.password
-    }
+      }
     },
    function (error, response, body) {
      console.log('error:', error); // Print the error if one occurred
@@ -53,7 +55,8 @@ app.post('/', (req, res)=> {
 })
 
 app.get('/login', (req, res) => {
-    res.render('login')
+    path = 'Login'
+    res.render('login',{path:path})
  })
 
 app.post('/login', (req, res)=> {
@@ -61,7 +64,11 @@ app.post('/login', (req, res)=> {
     // Prepare output in JSON format
     var promise= new Promise(resolve => {
       request.post('http://127.0.0.1:5000/login',
-        { json: { "username": req.body.username,"password":req.body.password} },
+        { json: { 
+          "username": req.body.username,
+          "password":req.body.password
+          }
+        },
         function (error, response, body) {
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           console.log('body:', body); // Print the HTML for the Google homepage.
@@ -86,9 +93,10 @@ app.post('/login', (req, res)=> {
  })
 
 app.get('/prediction', (req, res) => {
-
+    ssn = req.session
+    path = 'Prediction'
     if (ssn.token){
-      res.render('prediction');
+      res.render('prediction',{path:path});
     }else{
       res.status(400).render('400')
     }
@@ -96,16 +104,14 @@ app.get('/prediction', (req, res) => {
 
 app.post('/prediction', (req, res)=> {
 
-
-  let IsEnglish = false;
+  let isEnglish = 'false';
 
   if (req.body.english){
-    IsEnglish = true;
+    isEnglish = 'true';
   }
 
   console.log(req.body)
   ssn = req.session;
-  console.log(ssn.token);
     // Prepare output in JSON format
   var promise= new Promise(resolve => {
     request({
@@ -113,49 +119,88 @@ app.post('/prediction', (req, res)=> {
         'API-KEY': ssn.token
       },
       uri: 'http://127.0.0.1:5000/predict',
-      method: 'POST'
+      method: 'POST',
+      json: { 
+        "director":req.body.director,
+        "budget":req.body.budget,
+        "english":isEnglish,
+        "runtime":req.body.length,
+        "release_month":req.body.month,
+        "cast1":req.body.cast1,
+        "cast2":req.body.cast2,
+        "cast3":req.body.cast3,
+        "cast4":req.body.cast4,
+        "cast5":req.body.cast5
+      }
     }, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
-        ssn.result=body;
+        if(response.statusCode===401){
+          req.flash('error_message','No access since you are not logged in')
+          res.redirect(req.originalUrl)
+        }
+        ssn.result=body['revenue'];
         if(!error){
           resolve('resolved');
+        }else{
+          req.flash('error_message','Server Error, Please Contact to Admin fetchAPI@unsw.edu.au')
+          res.redirect(req.originalUrl)
         }
 
       })
     }).then(()=>{
     res.redirect('result');
-  }
-  );
-    // request.post('http://127.0.0.1:5000/prediction',{
-    //   json: {
-    //     "Budget": req.body.budget,
-    //     "Cast1": req.body.cast1,
-    //     "Cast2": req.body.cast2,
-    //     "Cast3": req.body.cast3,
-    //     "Cast4": req.body.cast4,
-    //     "Cast5": req.body.cast5,
-    //     "Length": req.body.length,
-    //     "Month": req.body.month,
-    //     "IsEnglish": IsEnglish,
-    //     }
-    //   },
-    //   function (error, response, body) {
-    //     console.log('error:', error); // Print the error if one occurred
-    //     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    //     console.log('body:', body); // Print the HTML for the Google homepage.
 
-    // });
-    // res.redirect('result')
+  });
 
  })
 
  app.get('/result', (req, res) => {
     ssn = req.session;
     result=ssn.result;
-    console.log(result);
-    res.render('result',{revenue:result});
+    var promise= new Promise(resolve => {
+      request({
+        headers: {
+          'API-KEY': ssn.token
+        },
+        uri:'http://127.0.0.1:5000/movies/'+result,
+        method:'GET',
+        json: { "revenue":result} },
+        function (error, response, body) {
+          console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+          console.log('body:', body); // Print the HTML for the Google homepage.
+          resolve(body);
+          if(response.statusCode===401){
+            req.flash('error_message','No access since you are not logged in')
+            res.redirect('prediction')
+          }
+      })
+    }).then((list)=>{
+      console.log(list);
+      //format the number as currency in USD
+      let revenue = currencyFormatter.format(result, { code: 'USD' });
+      let revenue1 = currencyFormatter.format(list['movieList'][0]['revenue'], { code: 'USD' });
+      let revenue2 = currencyFormatter.format(list['movieList'][1]['revenue'], { code: 'USD' });
+      let revenue3 = currencyFormatter.format(list['movieList'][2]['revenue'], { code: 'USD' });
+      path = 'Result'
+      res.render('result',{
+        revenue:revenue,
+        movie1:list['movieList'][0]['movie'],
+        revenue1:revenue1,
+        poster1:list['movieList'][0]['poster'],
+        movie2:list['movieList'][1]['movie'],
+        revenue2:revenue2,
+        poster2:list['movieList'][1]['poster'],
+        movie3:list['movieList'][2]['movie'],
+        revenue3:revenue3,
+        poster3:list['movieList'][2]['poster'],
+        path:path
+      });
+    }).catch(error=>{
+      console.log(error)
+    })
+
  })
 
  app.get('/logout', (req, res) => {
@@ -166,11 +211,9 @@ app.post('/prediction', (req, res)=> {
 
 // Handle 404
 app.use((req, res) =>{
-  res.status(404).render('404')
+  path = '404'
+  res.status(404).render('404',{path:path})
 });
-
-
-
 
 var server = app.listen(8081, function () {
    var port = server.address().port
