@@ -149,7 +149,8 @@ class Movies(Resource):
 class SignUp(Resource):
     # signs up the user
     @api.response(201, 'A new user successfully signed up.')
-    @api.doc(description="Signs up the user so they can log in")
+    @api.response(400, 'Username already exists.')
+    @api.doc(description="Signs up for new users.")
     @api.expect(login_model)
     def post(self):
         args = authenticate_parser.parse_args()
@@ -164,9 +165,9 @@ class SignUp(Resource):
 
 @api.route('/login')
 class Authenticate(Resource):
-    @api.response(201, 'Successful login')
-    @api.response(400, 'Incorrect login details')
-    @api.doc(description="Login form for users")
+    @api.response(201, 'Successful login.')
+    @api.response(400, 'Incorrect login details.')
+    @api.doc(description="Login form for users.")
     @api.expect(login_model)
     def post(self):
         args = authenticate_parser.parse_args()
