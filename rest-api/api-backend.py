@@ -149,7 +149,7 @@ class Movies(Resource):
 class SignUp(Resource):
     # signs up the user
     @api.response(201, 'A new user successfully signed up.')
-    @api.response(400, 'Username already exists.')
+    @api.response(400, 'Invalid user input.')
     @api.doc(description="Signs up for new users.")
     @api.expect(login_model)
     def post(self):
