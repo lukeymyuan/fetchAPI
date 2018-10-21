@@ -36,11 +36,11 @@ class Database(object):
             result = self.pointer.fetchone()
 
             if len(password) < 6:
-                error = "Password length is too short, needs to be more than 6 characters"
+                error = "Password length is too short, needs to be at least 6 characters."
             elif not found:
-                error="Password using invalid characters"
+                error="Password using invalid characters."
             elif result:
-                error="Username already exists"
+                error="Username already exists."
             else:
                 #if it is all valid, adds the username and password to the database
                 self.pointer.execute('''INSERT INTO User VALUES (?,?)''',(username,password))
@@ -48,7 +48,7 @@ class Database(object):
                 self.save()
                 error=None
         else:
-            error = "Username or password is not valid"
+            error = "Username or password is not valid."
 
         return error
 
