@@ -25,6 +25,6 @@ class Encryptor(object):
         payload = self.serial.loads(token.encode())
         time_stamp = payload.get('creation-time')
         if datetime.now() > datetime.strptime(time_stamp, timeformat) + timedelta(minutes=time_expiry):
-            raise SignatureExpired("Token created more than 10 seconds ago")
+            raise SignatureExpired("Token created more than 1 hour ago")
         return payload
 
