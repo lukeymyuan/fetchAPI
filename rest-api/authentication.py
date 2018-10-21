@@ -6,7 +6,7 @@ from datetime import datetime
 #What is sent in the creation time
 timeformat = "%Y-%m-%d %H:%M:%S.%f"
 #Time token stays alive before it
-time_expiry = 3600
+time_expiry = 60
 class Encryptor(object):
     def __init__(self,private_key):
         self.serial = JSONWebSignatureSerializer(private_key)
@@ -25,6 +25,6 @@ class Encryptor(object):
         payload = self.serial.loads(token.encode())
         time_stamp = payload.get('creation-time')
         if datetime.now() > datetime.strptime(time_stamp, timeformat) + timedelta(minutes=time_expiry):
-            raise SignatureExpired("Token created more than 1 hour ago")
+            raise SignatureExpired("Token created more than 60 min ago.")
         return payload
 
