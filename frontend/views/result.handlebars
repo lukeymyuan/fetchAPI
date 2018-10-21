@@ -1,9 +1,9 @@
 <body>
-  <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <div class="cover-container d-flex mx-auto flex-column">
     {{>nav}}
-    <h2 class="normal-heading">Result</h2>
-    <div class="card-group">
-      <div class="card" style="width: 18rem;">
+    <h2 class="normal-heading" style="padding-top:5%">Result</h2>
+    <div class="card-group" style="padding-top:3%">
+      <div class="card">
         <div class="card text-center">
             <div class="card-header bg-dark">
               The Robot <i class="fas fa-robot"></i> from Movie Paradise  think
@@ -11,12 +11,12 @@
             <div class="card-body" style="background-color:#005b96 ">
               <p class="card-text">The Revenue of the movie will be {{revenue}}</p>
             </div>
-          </div>
+        </div>
+      </div>
     </div>    
-  <div>
-    <h2 class="normal-heading">Similar Movies</h2>
-    <div class="card-group">
-      <div class="card" style="width: 18rem;">
+    <h2 class="normal-heading" style="padding-top:5%">Similar Movies</h2>
+    <div class="card-group" style="padding-top:3%">
+      <div class="card">
         <div class="card text-center">
             <div class="card-header bg-dark">
               {{movie1}}
@@ -24,34 +24,32 @@
             <div class="card-body" style="background-color:#005b96 ">
               <p class="card-text">The Revenue was {{revenue1}}</p>
             </div>
-            <img height="200px" class="img-responsive" src="{{poster1}}">
+              <img height="187px" class="img-responsive" src="{{poster1}}">
           </div>
         </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card text-center">
-                <div class="card-header  bg-dark">
-                  {{movie2}}
-                </div>
-                <div class="card-body" style="background-color:#005b96 ">
-                  <p class="card-text">The Revenue was {{revenue2}}</p>
-                </div>
-                <img height="200px" class="img-responsive" src="{{poster2}}">
-              </div>
-            </div>
-
-        <div class="card" style="width: 18rem;">
-            <div class="card text-center">
-                <div class="card-header  bg-dark">
-                  {{movie3}}
-                </div>
-                <div class="card-body" style="background-color:#005b96 ">
-                  <p class="card-text">The Revenue was {{revenue3}}</p>
-                </div>
-                <img height="200px" class="img-responsive" src="{{poster3}}">
-              </div>
-            </div>
+      <div class="card">
+        <div class="card text-center">
+          <div class="card-header  bg-dark">
+            {{movie2}}
           </div>
+          <div class="card-body" style="background-color:#005b96 ">
+            <p class="card-text">The Revenue was {{revenue2}}</p>
+          </div>
+            <img height="187px" class="img-responsive" src="{{poster2}}">
+        </div>
       </div>
-      {{>footer}}
+      <div class="card">
+        <div class="card">
+          <div class="card-header text-center bg-dark">
+            {{movie3}}
+          </div>
+          <div class="card-body" style="background-color:#005b96 ">
+            <p class="card-text">The Revenue was {{revenue3}}</p>
+          </div>
+            <img height="187px" class="img-responsive" src="{{poster3}}">
+          </div>
+        </div>
+    </div>
+    {{>footer}}
   </div>
 </body>

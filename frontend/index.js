@@ -44,7 +44,7 @@ app.post('/', (req, res)=> {
      json: {
      "username": req.body.username,
      "password":req.body.password
-    }
+      }
     },
    function (error, response, body) {
      console.log('error:', error); // Print the error if one occurred
@@ -64,7 +64,11 @@ app.post('/login', (req, res)=> {
     // Prepare output in JSON format
     var promise= new Promise(resolve => {
       request.post('http://127.0.0.1:5000/login',
-        { json: { "username": req.body.username,"password":req.body.password} },
+        { json: { 
+          "username": req.body.username,
+          "password":req.body.password
+          }
+        },
         function (error, response, body) {
           console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           console.log('body:', body); // Print the HTML for the Google homepage.
@@ -91,15 +95,14 @@ app.post('/login', (req, res)=> {
 app.get('/prediction', (req, res) => {
     ssn = req.session
     path = 'Prediction'
-    // if (ssn.token){
-    res.render('prediction',{path:path});
-    // }else{
-    //   res.status(400).render('400')
-    // }
+    if (ssn.token){
+      res.render('prediction',{path:path});
+    }else{
+      res.status(400).render('400')
+    }
  })
 
 app.post('/prediction', (req, res)=> {
-
 
   let isEnglish = 'false';
 
@@ -117,7 +120,18 @@ app.post('/prediction', (req, res)=> {
       },
       uri: 'http://127.0.0.1:5000/predict',
       method: 'POST',
-      json: { "director":req.body.director,"budget":req.body.budget,"english":isEnglish,"runtime":req.body.length,"release_month":req.body.month,"cast1":req.body.cast1,"cast2":req.body.cast2,"cast3":req.body.cast3,"cast4":req.body.cast4,"cast5":req.body.cast5}
+      json: { 
+        "director":req.body.director,
+        "budget":req.body.budget,
+        "english":isEnglish,
+        "runtime":req.body.length,
+        "release_month":req.body.month,
+        "cast1":req.body.cast1,
+        "cast2":req.body.cast2,
+        "cast3":req.body.cast3,
+        "cast4":req.body.cast4,
+        "cast5":req.body.cast5
+      }
     }, function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
@@ -129,6 +143,9 @@ app.post('/prediction', (req, res)=> {
         ssn.result=body['revenue'];
         if(!error){
           resolve('resolved');
+        }else{
+          req.flash('error_message','Server Error, Please Contact to Admin fetchAPI@unsw.edu.au')
+          res.redirect(req.originalUrl)
         }
 
       })
@@ -197,9 +214,6 @@ app.use((req, res) =>{
   path = '404'
   res.status(404).render('404',{path:path})
 });
-
-
-
 
 var server = app.listen(8081, function () {
    var port = server.address().port
